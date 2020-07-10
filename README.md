@@ -1,6 +1,16 @@
-# island-ru
-A 2D Isometric game with Rust Lang
+# Island-ru
 
+    Island (Something) is a 2D isometric game where you control up to 3 champions to fight enemies and solve puzzles on an Island.
+    You can customize your champions attributes between:
+
+    - Strenght
+    - Agility
+    - Health
+    - Stamina
+    - Mana
+
+    Game Mechanics
+    By draging and drop the champions to fight you have to be wise to pass to the next level.
 
 # Helpful Crates
 
