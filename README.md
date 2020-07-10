@@ -12,7 +12,7 @@
     Game Mechanics
     By draging and drop the champions to fight you have to be wise to pass to the next level.
 
-# Helpful Crates
+## Helpful Crates
 
 - Windowing
     - https://crates.io/crates/sdl2
@@ -26,4 +26,4 @@
 
 
 
-# TODO: https://trello.com/b/E4eq5bgb/island-game
+### TODO: https://trello.com/b/E4eq5bgb/island-game
