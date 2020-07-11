@@ -28,8 +28,8 @@ fn main() {
             gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
         }
 
-        for (_, events) in glfw::flush_messages(&events) {
-            handle_window_events(&mut window, events);
+        for (_, e) in glfw::flush_messages(&events) {
+            handle_window_events(&mut window, e);
         }
 
         window.swap_buffers();
