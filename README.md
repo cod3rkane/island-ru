@@ -22,6 +22,7 @@
 - OpenGL Context Provider:
     - https://crates.io/crates/glutin
     - https://crates.io/crates/gl
+    - https://crates.io/crates/wgpu
 
 - Used for math:
     - https://crates.io/crates/cgmath
