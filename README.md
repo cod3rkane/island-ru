@@ -17,6 +17,7 @@
 - Windowing
     - https://crates.io/crates/sdl2
     - https://crates.io/crates/glfw
+    - https://crates.io/crates/winit
 
 - OpenGL Context Provider:
     - https://crates.io/crates/glutin
