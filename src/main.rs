@@ -5,7 +5,6 @@ use glfw::{ Action, Context, Key };
 extern crate gl;
 
 fn main() {
-    println!("Hello, world!");
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
     
     glfw.window_hint(glfw::WindowHint::ContextVersion(4, 5));
