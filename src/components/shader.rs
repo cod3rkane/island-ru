@@ -1,12 +1,13 @@
+use gl::types::{ GLuint };
+
 pub enum LocationIndex {
     VertexPosition = 0,
     VertexColor = 1,
-    MatrixProjection,
-    MatrixView,
-    MatrixModel,
+    MatrixProjection = 2,
+    MatrixView = 3,
+    MatrixModel = 4,
 }
 
 pub struct Shader {
-    pub id: u8,
-    pub locs: Option<Vec<u8>>,
+    pub program_id: GLuint,
 }
