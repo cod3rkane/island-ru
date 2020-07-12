@@ -1,5 +1,5 @@
 pub struct Mesh {
     pub vertices: Vec<f32>,
-    pub indices: Option<Vec<u8>>,
+    pub indices: Vec<i32>,
     pub colors: Vec<f32>,
 }
