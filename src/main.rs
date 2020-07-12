@@ -5,6 +5,9 @@ use glfw::{ Action, Context, Key };
 extern crate gl;
 
 mod core;
+mod components;
+
+use components::mesh::{ Mesh };
 
 fn main() {
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
@@ -23,7 +26,22 @@ fn main() {
 
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
-    core::game_state::run_game_state();
+    let _triangle: Mesh = Mesh {
+        vertices: vec![
+            0.0, 0.5, 0.0,
+            -0.5, 0.0, 0.0,
+            0.5, 0.0, 0.0,
+        ],
+        indices: Some(vec![
+            0, 1, 2,
+            1, 2, 3,
+        ]),
+        colors: vec![
+            0.878431, 0.384314, 0.301961,
+            0.878431, 0.384314, 0.301961,
+            0.878431, 0.384314, 0.301961,
+        ],
+    };
 
     while !window.should_close() {
         unsafe {
