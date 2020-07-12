@@ -8,8 +8,7 @@ mod core;
 mod components;
 
 use components::mesh::{ Mesh };
-use components::shader::{ Shader, LocationIndex };
-use std::os::raw::c_void;
+use components::shader::{ Shader };
 
 fn main() {
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
