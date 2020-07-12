@@ -4,6 +4,8 @@ use glfw::{ Action, Context, Key };
 
 extern crate gl;
 
+mod core;
+
 fn main() {
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
     
@@ -20,6 +22,8 @@ fn main() {
     window.set_framebuffer_size_polling(true);
 
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
+
+    core::game_state::run_game_state();
 
     while !window.should_close() {
         unsafe {
