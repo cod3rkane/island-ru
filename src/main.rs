@@ -8,6 +8,7 @@ mod core;
 mod components;
 
 use components::mesh::{ Mesh };
+use components::shader::{ Shader };
 
 fn main() {
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
@@ -25,6 +26,8 @@ fn main() {
     window.set_framebuffer_size_polling(true);
 
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
+
+    let primary_shader = core::shader::create_shader("src/resources/vertex.glsl", "src/resources/fragment.glsl");
 
     let _triangle: Mesh = Mesh {
         vertices: vec![
