@@ -9,8 +9,11 @@ mod components;
 
 use components::mesh::{ Mesh };
 use components::shader::{ Shader };
+use crate::core::game_state::*;
+use crate::core::buffers::*;
 
 fn main() {
+    let mut _game_state: GameState = initial_game_state();
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
     
     glfw.window_hint(glfw::WindowHint::ContextVersion(4, 5));
@@ -48,69 +51,32 @@ fn main() {
         ],
     };
 
-    let mut vao: gl::types::GLuint = 0;
-    let mut vertices_vbo: gl::types::GLuint = 0;
-    let mut colors_vbo: gl::types::GLuint = 0;
-    let mut indices_vbo: gl::types::GLuint = 0;
+    let mut _vao: VertexArrayObject = VertexArrayObject::new();
+    _vao.bind();
 
-    unsafe {
-        gl::CreateVertexArrays(1, &mut vao);
-        gl::CreateBuffers(1, &mut vertices_vbo);
-        gl::CreateBuffers(1, &mut colors_vbo);
-        gl::CreateBuffers(1, &mut indices_vbo);
-    }
+    let mut _vertices_vbo: BufferObject = BufferObject::new(gl::ARRAY_BUFFER);
+    let mut _colors_vbo: BufferObject = BufferObject::new(gl::ARRAY_BUFFER);
+    let mut _indices_vbo: BufferObject = BufferObject::new(gl::ELEMENT_ARRAY_BUFFER);
 
-    unsafe {
-        gl::BindVertexArray(vao);
-    }
+    _vertices_vbo.bind();
+    _vertices_vbo.set_data(
+        (_triangle.vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+        _triangle.vertices.as_ptr() as *const gl::types::GLvoid
+    );
+    _vertices_vbo.set_vertex_attr(0, 3, (3 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
 
-    unsafe {
-        gl::BindBuffer(gl::ARRAY_BUFFER, vertices_vbo);
-        gl::NamedBufferStorage(
-            vertices_vbo,
-            (_triangle.vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-            _triangle.vertices.as_ptr() as *const gl::types::GLvoid,
-            gl::DYNAMIC_STORAGE_BIT,
-        );
-        gl::VertexAttribPointer(
-            0,
-            3,
-            gl::FLOAT,
-            gl::FALSE,
-            (3 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
-            std::ptr::null(),
-        );
-        gl::EnableVertexAttribArray(0);
-    }
+    _colors_vbo.bind();
+    _colors_vbo.set_data(
+        (_triangle.colors.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+        _triangle.colors.as_ptr() as *const gl::types::GLvoid,
+    );
+    _colors_vbo.set_vertex_attr(1, 4, (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
 
-    unsafe {
-        gl::BindBuffer(gl::ARRAY_BUFFER, colors_vbo);
-        gl::NamedBufferStorage(
-            colors_vbo,
-            (_triangle.colors.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-            _triangle.colors.as_ptr() as *const gl::types::GLvoid,
-            gl::DYNAMIC_STORAGE_BIT,
-        );
-        gl::VertexAttribPointer(
-            1,
-            4,
-            gl::FLOAT,
-            gl::FALSE,
-            (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
-            std::ptr::null(),
-        );
-        gl::EnableVertexAttribArray(1);
-    }
-
-    unsafe {
-        gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, indices_vbo);
-        gl::NamedBufferStorage(
-            indices_vbo,
-            (_triangle.indices.len() * std::mem::size_of::<gl::types::GLfloat>()) as gl::types::GLsizeiptr,
-            _triangle.indices.as_ptr() as *const gl::types::GLvoid,
-            gl::DYNAMIC_STORAGE_BIT,
-        );
-    }
+    _indices_vbo.bind();
+    _indices_vbo.set_data(
+        (_triangle.indices.len() * std::mem::size_of::<gl::types::GLfloat>()) as gl::types::GLsizeiptr,
+        _triangle.indices.as_ptr() as *const gl::types::GLvoid,
+    );
 
     while !window.should_close() {
         unsafe {
@@ -118,8 +84,9 @@ fn main() {
             gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
         }
 
+        _vao.bind();
+
         unsafe {
-            gl::BindVertexArray(vao);
             gl::UseProgram(_primary_shader.program_id);
             // gl::DrawArrays(gl::TRIANGLES, 0, 3);
             gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, std::ptr::null());
@@ -133,12 +100,10 @@ fn main() {
         glfw.poll_events();
     }
 
-    unsafe {
-        gl::DeleteVertexArrays(1, &vao);
-        gl::DeleteBuffers(1, &vertices_vbo);
-        gl::DeleteBuffers(1, &colors_vbo);
-        gl::DeleteBuffers(1, &indices_vbo);
-    }
+    _vao.clean();
+    _vertices_vbo.clean();
+    _colors_vbo.clean();
+    _indices_vbo.clean();
 }
 
 fn handle_window_events(window: &mut glfw::Window, event: glfw::WindowEvent) {
