@@ -4,11 +4,10 @@ use glfw::{ Action, Context, Key };
 
 extern crate gl;
 
-mod core;
 mod components;
+mod core;
+mod systems;
 
-use components::mesh::{ Mesh };
-use components::shader::{ Shader };
 use crate::core::game_state::*;
 
 fn main() {
@@ -29,29 +28,6 @@ fn main() {
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
     let mut _game_state: GameState = initial_game_state();
-    let _primary_shader: Shader = core::shader::create_shader("src/resources/vertex.glsl", "src/resources/fragment.glsl");
-
-    _game_state.buffers.get(0).unwrap().bind();
-
-    _game_state.buffers.get(0).unwrap().vertices_vbo.bind();
-    _game_state.buffers.get(0).unwrap().vertices_vbo.set_data(
-        (_game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-        _game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.vertices.as_ptr() as *const gl::types::GLvoid
-    );
-    _game_state.buffers.get(0).unwrap().vertices_vbo.set_vertex_attr(0, 3, (3 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
-
-    _game_state.buffers.get(0).unwrap().colors_vbo.bind();
-    _game_state.buffers.get(0).unwrap().colors_vbo.set_data(
-        (_game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.colors.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-        _game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.colors.as_ptr() as *const gl::types::GLvoid,
-    );
-    _game_state.buffers.get(0).unwrap().colors_vbo.set_vertex_attr(1, 4, (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
-
-    _game_state.buffers.get(0).unwrap().indices_vbo.bind();
-    _game_state.buffers.get(0).unwrap().indices_vbo.set_data(
-        (_game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.indices.len() * std::mem::size_of::<gl::types::GLfloat>()) as gl::types::GLsizeiptr,
-        _game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.indices.as_ptr() as *const gl::types::GLvoid,
-    );
 
     while !window.should_close() {
         unsafe {
@@ -59,26 +35,17 @@ fn main() {
             gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
         }
 
-        _game_state.buffers.get(0).unwrap().bind();
-
-        unsafe {
-            gl::UseProgram(_primary_shader.program_id);
-            // gl::DrawArrays(gl::TRIANGLES, 0, 3);
-            gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, std::ptr::null());
-        }
-
         for (_, e) in glfw::flush_messages(&events) {
             handle_window_events(&mut window, e);
         }
+
+        systems::render::render_system(&mut _game_state);
 
         window.swap_buffers();
         glfw.poll_events();
     }
 
-    _game_state.buffers.get(0).unwrap().vertices_vbo.clean();
-    _game_state.buffers.get(0).unwrap().colors_vbo.clean();
-    _game_state.buffers.get(0).unwrap().indices_vbo.clean();
-    _game_state.buffers.get(0).unwrap().clean();
+    systems::render::render_system_clean(&mut _game_state);
 }
 
 fn handle_window_events(window: &mut glfw::Window, event: glfw::WindowEvent) {
