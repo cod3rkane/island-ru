@@ -31,45 +31,26 @@ fn main() {
     let mut _game_state: GameState = initial_game_state();
     let _primary_shader: Shader = core::shader::create_shader("src/resources/vertex.glsl", "src/resources/fragment.glsl");
 
-    let _triangle: Mesh = Mesh {
-        vertices: vec![
-            -0.5, 0.0, 0.0,
-            0.0, 0.5, 0.0,
-            0.5, 0.0, 0.0,
-            0.0, -0.5, 0.0,
-        ],
-        indices: vec![
-            0, 1, 2,
-            0, 2, 3,
-        ],
-        colors: vec![
-            0.14902, 0.901961, 0.545098, 1.0,
-            0.14902, 0.901961, 0.545098, 1.0,
-            0.14902, 0.901961, 0.545098, 1.0,
-            0.14902, 0.901961, 0.545098, 1.0,
-        ],
-    };
-
     _game_state.buffers.get(0).unwrap().bind();
 
     _game_state.buffers.get(0).unwrap().vertices_vbo.bind();
     _game_state.buffers.get(0).unwrap().vertices_vbo.set_data(
-        (_triangle.vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-        _triangle.vertices.as_ptr() as *const gl::types::GLvoid
+        (_game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+        _game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.vertices.as_ptr() as *const gl::types::GLvoid
     );
     _game_state.buffers.get(0).unwrap().vertices_vbo.set_vertex_attr(0, 3, (3 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
 
     _game_state.buffers.get(0).unwrap().colors_vbo.bind();
     _game_state.buffers.get(0).unwrap().colors_vbo.set_data(
-        (_triangle.colors.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-        _triangle.colors.as_ptr() as *const gl::types::GLvoid,
+        (_game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.colors.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+        _game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.colors.as_ptr() as *const gl::types::GLvoid,
     );
     _game_state.buffers.get(0).unwrap().colors_vbo.set_vertex_attr(1, 4, (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
 
     _game_state.buffers.get(0).unwrap().indices_vbo.bind();
     _game_state.buffers.get(0).unwrap().indices_vbo.set_data(
-        (_triangle.indices.len() * std::mem::size_of::<gl::types::GLfloat>()) as gl::types::GLsizeiptr,
-        _triangle.indices.as_ptr() as *const gl::types::GLvoid,
+        (_game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.indices.len() * std::mem::size_of::<gl::types::GLfloat>()) as gl::types::GLsizeiptr,
+        _game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.indices.as_ptr() as *const gl::types::GLvoid,
     );
 
     while !window.should_close() {
