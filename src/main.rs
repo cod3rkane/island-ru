@@ -10,10 +10,8 @@ mod components;
 use components::mesh::{ Mesh };
 use components::shader::{ Shader };
 use crate::core::game_state::*;
-use crate::core::buffers::*;
 
 fn main() {
-    let mut _game_state: GameState = initial_game_state();
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
     
     glfw.window_hint(glfw::WindowHint::ContextVersion(4, 5));
@@ -30,6 +28,7 @@ fn main() {
 
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
+    let mut _game_state: GameState = initial_game_state();
     let _primary_shader: Shader = core::shader::create_shader("src/resources/vertex.glsl", "src/resources/fragment.glsl");
 
     let _triangle: Mesh = Mesh {
@@ -51,29 +50,24 @@ fn main() {
         ],
     };
 
-    let mut _vao: VertexArrayObject = VertexArrayObject::new();
-    _vao.bind();
+    _game_state.buffers.get(0).unwrap().bind();
 
-    let mut _vertices_vbo: BufferObject = BufferObject::new(gl::ARRAY_BUFFER);
-    let mut _colors_vbo: BufferObject = BufferObject::new(gl::ARRAY_BUFFER);
-    let mut _indices_vbo: BufferObject = BufferObject::new(gl::ELEMENT_ARRAY_BUFFER);
-
-    _vertices_vbo.bind();
-    _vertices_vbo.set_data(
+    _game_state.buffers.get(0).unwrap().vertices_vbo.bind();
+    _game_state.buffers.get(0).unwrap().vertices_vbo.set_data(
         (_triangle.vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
         _triangle.vertices.as_ptr() as *const gl::types::GLvoid
     );
-    _vertices_vbo.set_vertex_attr(0, 3, (3 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
+    _game_state.buffers.get(0).unwrap().vertices_vbo.set_vertex_attr(0, 3, (3 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
 
-    _colors_vbo.bind();
-    _colors_vbo.set_data(
+    _game_state.buffers.get(0).unwrap().colors_vbo.bind();
+    _game_state.buffers.get(0).unwrap().colors_vbo.set_data(
         (_triangle.colors.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
         _triangle.colors.as_ptr() as *const gl::types::GLvoid,
     );
-    _colors_vbo.set_vertex_attr(1, 4, (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
+    _game_state.buffers.get(0).unwrap().colors_vbo.set_vertex_attr(1, 4, (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
 
-    _indices_vbo.bind();
-    _indices_vbo.set_data(
+    _game_state.buffers.get(0).unwrap().indices_vbo.bind();
+    _game_state.buffers.get(0).unwrap().indices_vbo.set_data(
         (_triangle.indices.len() * std::mem::size_of::<gl::types::GLfloat>()) as gl::types::GLsizeiptr,
         _triangle.indices.as_ptr() as *const gl::types::GLvoid,
     );
@@ -84,7 +78,7 @@ fn main() {
             gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
         }
 
-        _vao.bind();
+        _game_state.buffers.get(0).unwrap().bind();
 
         unsafe {
             gl::UseProgram(_primary_shader.program_id);
@@ -100,10 +94,10 @@ fn main() {
         glfw.poll_events();
     }
 
-    _vao.clean();
-    _vertices_vbo.clean();
-    _colors_vbo.clean();
-    _indices_vbo.clean();
+    _game_state.buffers.get(0).unwrap().vertices_vbo.clean();
+    _game_state.buffers.get(0).unwrap().colors_vbo.clean();
+    _game_state.buffers.get(0).unwrap().indices_vbo.clean();
+    _game_state.buffers.get(0).unwrap().clean();
 }
 
 fn handle_window_events(window: &mut glfw::Window, event: glfw::WindowEvent) {
