@@ -10,7 +10,7 @@ pub fn initial_game_state() -> GameState {
     let mut initial_buffer: Buffer = Buffer::new();
 
     GameState {
-        entities: vec![],
+        entities: vec![Some(Entity::newSquare())],
         buffers: vec![initial_buffer],
     }
 }
