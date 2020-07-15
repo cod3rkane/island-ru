@@ -6,44 +6,52 @@ use gl::{
     NamedBufferStorage,
     VertexAttribPointer,
     EnableVertexAttribArray,
+    DeleteBuffers,
+    BindBuffer,
 };
 use gl::types::{ GLuint, GLenum, GLvoid, GLsizeiptr, GLint, GLsizei };
 
-pub struct VertexArrayObject {
-    pub id: GLuint,
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Buffer {
+    pub vao_id: GLuint,
+    pub vertices_vbo: BufferObject,
+    pub colors_vbo: BufferObject,
+    pub indices_vbo: BufferObject,
 }
 
-impl VertexArrayObject {
-    pub fn new() -> VertexArrayObject {
-        let mut id: GLuint = 0;
+impl Buffer {
+    pub fn new() -> Buffer {
+        let mut vao_id: GLuint = 0;
 
         unsafe {
-            CreateVertexArrays(1, &mut id);
+            CreateVertexArrays(1, &mut vao_id);
         }
 
-        VertexArrayObject {
-            id,
+        Buffer {
+            vao_id,
+            vertices_vbo: BufferObject::new(gl::ARRAY_BUFFER),
+            colors_vbo: BufferObject::new(gl::ARRAY_BUFFER),
+            indices_vbo: BufferObject::new(gl::ELEMENT_ARRAY_BUFFER),
         }
     }
 
     pub fn bind(&self) {
         unsafe {
-            BindVertexArray(self.id);
+            BindVertexArray(self.vao_id);
         }
     }
 
     pub fn clean(&self) {
         unsafe {
-            DeleteVertexArrays(1, &self.id);
+            DeleteVertexArrays(1, &self.vao_id);
         }
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct BufferObject {
     pub id: GLuint,
-    kind: GLenum,
-    data: Option<*const GLvoid>,
-    size: Option<GLsizeiptr>,
+    pub kind: GLenum,
 }
 
 impl BufferObject {
@@ -57,21 +65,16 @@ impl BufferObject {
         BufferObject {
             id,
             kind,
-            data: None,
-            size: None,
-        }   
+        }
     }
 
     pub fn bind(&self) {
         unsafe {
-            gl::BindBuffer(self.kind, self.id);
+            BindBuffer(self.kind, self.id);
         }
     }
 
-    pub fn set_data(&mut self, size: GLsizeiptr, data: *const GLvoid) {
-        self.data = Some(data);
-        self.size = Some(size);
-
+    pub fn set_data(&self, size: GLsizeiptr, data: *const GLvoid) {
         unsafe {
             NamedBufferStorage(
                 self.id,
@@ -98,7 +101,7 @@ impl BufferObject {
 
     pub fn clean(&self) {
         unsafe {
-            gl::DeleteBuffers(1, &self.id);
+            DeleteBuffers(1, &self.id);
         }
     }
 }
