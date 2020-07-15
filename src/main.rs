@@ -18,7 +18,12 @@ fn main() {
     #[cfg(target_os = "macos")]
     glfw.window_hint(glfw::WindowHint::OpenGlForwardCompat(true));
 
-    let (mut window, events) = glfw.create_window(1280, 720, "Island Something - Cod3r Kane", glfw::WindowMode::Windowed)
+    let (mut window, events) = glfw.create_window(
+        1280,
+        720,
+        "Island Something - Cod3r Kane",
+        glfw::WindowMode::Windowed
+    )
         .expect("Failed to Create GLFW Window");
 
     window.make_current();
