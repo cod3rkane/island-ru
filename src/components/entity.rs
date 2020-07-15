@@ -6,7 +6,7 @@ pub struct Entity {
 }
 
 impl Entity {
-    pub fn newSquare() -> Entity {
+    pub fn new_square() -> Entity {
         let _triangle = Mesh {
             vertices: vec![
                 -0.5, 0.0, 0.0,
