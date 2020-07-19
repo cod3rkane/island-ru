@@ -36,14 +36,19 @@ fn main() {
 
     while !window.should_close() {
         unsafe {
+            gl::Viewport(0, 0, 1280, 720);
+
             gl::ClearColor(0.25098, 0.25098, 0.25098, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+            gl::Enable(gl::DEPTH_TEST);
+            gl::Enable(gl::MULTISAMPLE);
         }
 
         for (_, e) in glfw::flush_messages(&events) {
             handle_window_events(&mut window, e);
         }
 
+        systems::physics::physics_system(&mut _game_state);
         systems::render::render_system(&mut _game_state);
 
         window.swap_buffers();
