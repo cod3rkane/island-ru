@@ -26,6 +26,8 @@
 
 - Used for math:
     - https://crates.io/crates/cgmath
+    - https://crates.io/crates/nalgebra
+    - https://crates.io/crates/nalgebra-glm
 
 
 
