@@ -25,6 +25,10 @@ pub fn create_program(vertex: GLuint, fragment: GLuint) -> GLuint {
         program = gl::CreateProgram();
         gl::AttachShader(program, vertex);
         gl::AttachShader(program, fragment);
+
+        gl::BindAttribLocation(program, 0, CString::new("vertexPosition").expect("vertexPosition").as_ptr());
+        gl::BindAttribLocation(program, 1, CString::new("vertexColor").expect("vertexColor").as_ptr());
+
         gl::LinkProgram(program);
     }
 
