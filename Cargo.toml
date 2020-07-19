@@ -9,5 +9,6 @@ edition = "2018"
 [dependencies]
 glfw = "0.39.0"
 gl = "0.14.0"
-cgmath = "0.17.0"
+nalgebra = "0.21.1"
+nalgebra-glm = "0.7.0"
 slotmap = "0.4.0"
