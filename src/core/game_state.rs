@@ -14,9 +14,13 @@ pub struct GameState {
 pub fn initial_game_state() -> GameState {
     let initial_buffer: Buffer = Buffer::new();
     let current_shader: Shader = create_shader("src/resources/vertex.glsl", "src/resources/fragment.glsl");
+    let mut _triangle_a = Entity::new_square(vec3(0.5, -0.5, 0.0));
+    _triangle_a.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
+    let mut _triangle_b = Entity::new_square(vec3(-0.8, -0.5, 0.0));
+    _triangle_b.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
 
     GameState {
-        entities: vec![Entity::new_square(vec3(0.5, -0.5, 0.0)), Entity::new_square(vec3(-0.8, -0.5, 0.0))],
+        entities: vec![_triangle_a, _triangle_b],
         buffers: vec![initial_buffer],
         current_shader,
     }
