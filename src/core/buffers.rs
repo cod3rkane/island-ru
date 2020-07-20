@@ -3,7 +3,7 @@ use gl::{
     BindVertexArray,
     DeleteVertexArrays,
     CreateBuffers,
-    NamedBufferStorage,
+    BufferData,
     VertexAttribPointer,
     EnableVertexAttribArray,
     DeleteBuffers,
@@ -88,11 +88,11 @@ impl BufferObject {
 
     pub fn set_data(&self, size: GLsizeiptr, data: *const GLvoid) {
         unsafe {
-            NamedBufferStorage(
-                self.id,
+            BufferData(
+                self.kind,
                 size,
                 data,
-                gl::DYNAMIC_STORAGE_BIT,
+                gl::STATIC_DRAW
             );
         }
     }
