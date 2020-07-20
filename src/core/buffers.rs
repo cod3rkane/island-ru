@@ -8,7 +8,6 @@ use gl::{
     EnableVertexAttribArray,
     DeleteBuffers,
     BindBuffer,
-    BufferData,
 };
 use gl::types::{ GLuint, GLenum, GLvoid, GLsizeiptr, GLint, GLsizei };
 
@@ -25,7 +24,7 @@ impl Buffer {
         let mut vao_id: GLuint = 0;
 
         unsafe {
-            gl::GenVertexArrays(1, &mut vao_id);
+            CreateVertexArrays(1, &mut vao_id);
         }
 
         Buffer {
@@ -66,7 +65,7 @@ impl BufferObject {
         let mut id: GLuint = 0;
 
         unsafe {
-            gl::GenBuffers(1, &mut id);
+            CreateBuffers(1, &mut id);
         }
 
         BufferObject {
@@ -95,12 +94,6 @@ impl BufferObject {
                 data,
                 gl::DYNAMIC_STORAGE_BIT,
             );
-            // gl::BufferStorage(
-            //     self.id,
-            //     size,
-            //     data,
-            //     gl::DYNAMIC_DRAW,
-            // );
         }
     }
 
