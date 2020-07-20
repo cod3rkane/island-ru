@@ -3,13 +3,14 @@ use gl::{
     BindVertexArray,
     DeleteVertexArrays,
     CreateBuffers,
-    BufferData,
     VertexAttribPointer,
     EnableVertexAttribArray,
     DeleteBuffers,
     BindBuffer,
 };
+
 use gl::types::{ GLuint, GLenum, GLvoid, GLsizeiptr, GLint, GLsizei };
+extern crate gl;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Buffer {
@@ -88,11 +89,11 @@ impl BufferObject {
 
     pub fn set_data(&self, size: GLsizeiptr, data: *const GLvoid) {
         unsafe {
-            BufferData(
+            gl::BufferData(
                 self.kind,
                 size,
                 data,
-                gl::STATIC_DRAW
+                gl::DYNAMIC_DRAW
             );
         }
     }
@@ -114,6 +115,23 @@ impl BufferObject {
     pub fn clean(&self) {
         unsafe {
             DeleteBuffers(1, &self.id);
+        }
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct BufferData {
+    pub vertices: Vec<f32>,
+    pub indices: Vec<i32>,
+    pub colors: Vec<f32>,
+}
+
+impl BufferData {
+    pub fn new() -> BufferData {
+        BufferData {
+            vertices: vec![],
+            indices: vec![],
+            colors: vec![],
         }
     }
 }
