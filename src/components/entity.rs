@@ -1,6 +1,7 @@
 use crate::components::{ physics::Physics, mesh::Mesh };
 use nalgebra_glm::{ Vec3 };
 
+#[derive(Debug, PartialEq)]
 pub struct Entity {
     pub physics: Option<Physics>,
     pub mesh: Mesh,
