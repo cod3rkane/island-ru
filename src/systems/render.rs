@@ -64,7 +64,7 @@ fn get_big_chunk_from_entities(entities: &mut Vec<Entity>) -> (Vec<f32>, Vec<i32
     let mut colors: Vec<f32> = vec![];
 
     for e in entities {
-        for v in e.mesh.vertices.clone() {
+        for v in e.vertices.clone() {
             vertices.push(v);
         }
 
