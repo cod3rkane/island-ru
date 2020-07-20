@@ -1,5 +1,5 @@
 use crate::components::{ physics::Physics, mesh::Mesh };
-use nalgebra_glm::{ vec3 };
+use nalgebra_glm::{ Vec3 };
 
 pub struct Entity {
     pub physics: Option<Physics>,
@@ -7,7 +7,7 @@ pub struct Entity {
 }
 
 impl Entity {
-    pub fn new_square() -> Entity {
+    pub fn new_square(position: Vec3) -> Entity {
         let _triangle = Mesh {
             vertices: vec![
                 -0.5, 0.0, 0.0,
@@ -28,7 +28,7 @@ impl Entity {
         };
 
         Entity {
-            physics: Some(Physics::new(vec3(0.5, -0.5, 0.0))),
+            physics: Some(Physics::new(position)),
             mesh: _triangle,
         }
     }
