@@ -28,7 +28,7 @@ impl Entity {
         };
 
         Entity {
-            physics: Some(Physics::new(vec3(0.0, 0.0, 0.0))),
+            physics: Some(Physics::new(vec3(0.5, -0.5, 0.0))),
             mesh: _triangle,
         }
     }
