@@ -26,5 +26,16 @@ pub fn physics_system(game_state: &mut GameState, deltatime: f64) {
             item.vertices[index] = _position.z;
             index += 1;
         }
+
+        game_state.buffer_data.vertices.extend(item.vertices.iter().cloned());
+        let indices_size = match game_state.buffer_data.indices.iter().max() {
+            Some(max) => *max + 1,
+            None => 0,
+        };
+        for i in &item.mesh.indices {
+            game_state.buffer_data.indices.push(*i + indices_size);
+        }
+        
+        game_state.buffer_data.colors.extend(item.mesh.colors.iter().cloned());
     }
 }
