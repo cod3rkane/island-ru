@@ -1,5 +1,6 @@
 use nalgebra_glm::{ Vec3, Mat4, mat4, translate, rotate_z, scale };
 
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Physics {
     pub position: Vec3,
     pub transform: Mat4,
