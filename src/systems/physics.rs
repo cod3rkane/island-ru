@@ -18,7 +18,7 @@ pub fn physics_system(game_state: &mut GameState) {
                             x.mesh.vertices[index],
                          x.mesh.vertices[index + 1],
                          x.mesh.vertices[index + 2],
-                            0.01,
+                            1.0,
                         );
         
                         x.mesh.vertices[index] = _position.x;
@@ -33,6 +33,4 @@ pub fn physics_system(game_state: &mut GameState) {
             }
         }
     }
-
-    // println!("here: {:?}", game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.vertices);
 }
