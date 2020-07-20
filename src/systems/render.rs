@@ -35,26 +35,7 @@ pub fn render_system(game_state: &mut GameState) {
         game_state.entities.get(0).unwrap().as_ref().unwrap().mesh.indices.as_ptr() as *const gl::types::GLvoid,
     );
 
-    let mut _transform: glm::Mat4 = glm::mat4(
-        1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0,
-    );
-    _transform = glm::translate(&mut _transform, &mut glm::vec3(0.5, -0.5, 0.0));
-    _transform = glm::scale(&mut _transform, &mut glm::vec3(0.5, 0.5, 0.5));
-
-
-    let _transform_loc: i32 =  unsafe { gl::GetUniformLocation(game_state.current_shader.program_id, c_str!("transform").as_ptr()) };
-
     unsafe {
-        gl::UniformMatrix4fv(
-            _transform_loc,
-            1,
-            gl::FALSE,
-            _transform.as_ptr(),
-        );
-
         gl::Enable(gl::BLEND);
         gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
         gl::UseProgram(game_state.current_shader.program_id);
