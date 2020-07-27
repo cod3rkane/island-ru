@@ -33,10 +33,12 @@ fn main() {
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
     let mut _game_state: GameState = initial_game_state();
+    _game_state.window_width = 1280;
+    _game_state.window_height = 720;
 
     while !window.should_close() {
         unsafe {
-            gl::Viewport(0, 0, 1280, 720);
+            gl::Viewport(0, 0, _game_state.window_width, _game_state.window_height);
 
             gl::ClearColor(0.25098, 0.25098, 0.25098, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
@@ -46,7 +48,7 @@ fn main() {
 
         for (_, e) in glfw::flush_messages(&events) {
             systems::input::capture_input(&mut window, &e, &mut _game_state);
-            handle_window_events(&mut window, e);
+            handle_window_events(&mut window, e, &mut _game_state);
         }
 
         systems::physics::physics_system(&mut _game_state, glfw.get_time());
@@ -59,9 +61,11 @@ fn main() {
     systems::render::render_system_clean(&mut _game_state);
 }
 
-fn handle_window_events(window: &mut glfw::Window, event: glfw::WindowEvent) {
+fn handle_window_events(window: &mut glfw::Window, event: glfw::WindowEvent, game_state: &mut GameState) {
     match event {
         glfw::WindowEvent::FramebufferSize(width, height) => {
+            game_state.window_width = width;
+            game_state.window_height = height;
             unsafe { gl::Viewport(0, 0, width, height) }
         }
         glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => {
