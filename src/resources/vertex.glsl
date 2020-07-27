@@ -5,7 +5,9 @@ layout (location = 1) in vec4 vertexColor;
 
 out vec4 color;
 
+uniform mat4 view_matrix;
+
 void main() {
-  gl_Position = vec4(vertexPosition, 1.0);
+  gl_Position = view_matrix * vec4(vertexPosition, 1.0);
   color = vertexColor;
 }
