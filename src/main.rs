@@ -45,6 +45,7 @@ fn main() {
         }
 
         for (_, e) in glfw::flush_messages(&events) {
+            systems::input::capture_input(&mut window, &e, &mut _game_state);
             handle_window_events(&mut window, e);
         }
 
