@@ -39,9 +39,14 @@ pub fn render_system(game_state: &mut GameState) {
             game_state.buffer_data.indices.as_ptr() as *const gl::types::GLvoid,
         );
 
+        let aspect: f32 = (game_state.window_width / game_state.window_height) as f32;
+        game_state.projection_matrix = glm::perspective(aspect, 45.0, 0.1, 100.0);
+
         unsafe {
             let view_id = gl::GetUniformLocation(game_state.current_shader.program_id, CString::new("view_matrix").expect("view_matrix").as_ptr());
             gl::UniformMatrix4fv(view_id, 1, gl::FALSE, game_state.view_matrix.as_ptr());
+            let projection_id = gl::GetUniformLocation(game_state.current_shader.program_id, CString::new("projection_matrix").expect("projection_matrix").as_ptr());
+            gl::UniformMatrix4fv(projection_id, 1, gl::FALSE, game_state.projection_matrix.as_ptr());
             gl::Enable(gl::BLEND);
             gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
 
