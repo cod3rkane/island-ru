@@ -3,7 +3,7 @@ use crate::components::shader::{ Shader };
 use crate::core::buffers::*;
 use crate::core::shader::{ create_shader };
 
-use nalgebra_glm::{ vec3, Mat4, mat4 };
+use nalgebra_glm::{ vec3, Mat4, mat4, translate };
 
 pub struct GameState {
     pub entities: Vec<Entity>,
@@ -11,6 +11,9 @@ pub struct GameState {
     pub current_shader: Shader,
     pub buffer_data: BufferData,
     pub view_matrix: Mat4,
+    pub projection_matrix: Mat4,
+    pub window_width: i32,
+    pub window_height: i32,
 }
 
 pub fn initial_game_state() -> GameState {
@@ -26,6 +29,13 @@ pub fn initial_game_state() -> GameState {
         0.0, 0.0, 1.0, 0.0,
         0.0, 0.0, 0.0, 1.0,
     );
+    _view_matrix = translate(&mut _view_matrix, &vec3(0.0, 0.0, -3.0));
+    let mut _projection_matrix: Mat4 = mat4(
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0,
+    );
 
     GameState {
         entities: vec![_triangle_a, _triangle_b],
@@ -33,5 +43,8 @@ pub fn initial_game_state() -> GameState {
         current_shader,
         buffer_data: BufferData::new(),
         view_matrix: _view_matrix,
+        projection_matrix: _projection_matrix,
+        window_width: 0,
+        window_height: 0,
     }
 }
