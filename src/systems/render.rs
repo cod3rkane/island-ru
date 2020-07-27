@@ -3,7 +3,7 @@ extern crate nalgebra_glm as glm;
 
 use crate::core::game_state::GameState;
 use crate::components::entity::{ Entity };
-use std::ffi::{ CStr };
+use std::ffi::{ CStr, CString };
 
 macro_rules! c_str {
     ($literal:expr) => {
@@ -40,6 +40,8 @@ pub fn render_system(game_state: &mut GameState) {
         );
 
         unsafe {
+            let view_id = gl::GetUniformLocation(game_state.current_shader.program_id, CString::new("view_matrix").expect("view_matrix").as_ptr());
+            gl::UniformMatrix4fv(view_id, 1, gl::FALSE, game_state.view_matrix.as_ptr());
             gl::Enable(gl::BLEND);
             gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
 
