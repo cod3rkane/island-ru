@@ -3,13 +3,14 @@ use crate::components::shader::{ Shader };
 use crate::core::buffers::*;
 use crate::core::shader::{ create_shader };
 
-use nalgebra_glm::{ vec3 };
+use nalgebra_glm::{ vec3, Mat4, mat4 };
 
 pub struct GameState {
     pub entities: Vec<Entity>,
     pub buffers: Vec<Buffer>,
     pub current_shader: Shader,
     pub buffer_data: BufferData,
+    pub view_matrix: Mat4,
 }
 
 pub fn initial_game_state() -> GameState {
@@ -19,11 +20,18 @@ pub fn initial_game_state() -> GameState {
     _triangle_a.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
     let mut _triangle_b = Entity::new_square(vec3(-100.0, 0.5, 0.0));
     _triangle_b.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
+    let mut _view_matrix: Mat4 = mat4(
+        1.0, 0.0, 0.0, 0.0,
+        0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0,
+        0.0, 0.0, 0.0, 1.0,
+    );
 
     GameState {
         entities: vec![_triangle_a, _triangle_b],
         buffers: vec![initial_buffer],
         current_shader,
         buffer_data: BufferData::new(),
+        view_matrix: _view_matrix,
     }
 }
