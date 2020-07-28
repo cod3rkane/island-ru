@@ -5,7 +5,7 @@ use nalgebra_glm::{ Vec3 };
 pub struct Entity {
     pub physics: Option<Physics>,
     pub mesh: Mesh,
-    pub vertices: Vec<f32>,
+    pub t_vertices: Vec<f32>,
 }
 
 impl Entity {
@@ -32,7 +32,7 @@ impl Entity {
         Entity {
             physics: Some(Physics::new(position)),
             mesh: _triangle,
-            vertices: vec![
+            t_vertices: vec![
                 -0.5, 0.0, 0.0,
                 0.0, 0.5, 0.0,
                 0.5, 0.0, 0.0,
