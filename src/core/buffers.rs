@@ -18,6 +18,7 @@ pub struct Buffer {
     pub vertices_vbo: BufferObject,
     pub colors_vbo: BufferObject,
     pub indices_vbo: BufferObject,
+    // @TODO: add bufferData here
 }
 
 impl Buffer {
