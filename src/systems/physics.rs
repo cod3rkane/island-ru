@@ -2,6 +2,8 @@ use crate::core::game_state::GameState;
 extern crate nalgebra_glm as glm;
 
 pub fn physics_system(game_state: &mut GameState, deltatime: f64) {
+    // @TODO: I think we can improve this whole loop by just checking for entities that does need to be updated
+    // Like, look for an item.hasUpdated = true if that so do all the physics stuffs.
     for item in &mut game_state.entities {
         let mut index: usize = 0;
         let mut _position: glm::Vec4 = glm::vec4(0.0, 0.0, 0.0, 0.0);
