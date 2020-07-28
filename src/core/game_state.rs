@@ -9,7 +9,7 @@ pub struct GameState {
     pub entities: Vec<Entity>,
     pub buffers: Vec<Buffer>,
     pub current_shader: Shader,
-    pub buffer_data: BufferData,
+    pub buffer_data: BufferData, // @TODO: this guy disappear, it will be inside the Buffer now.
     pub view_matrix: Mat4,
     pub projection_matrix: Mat4,
     pub window_width: i32,
