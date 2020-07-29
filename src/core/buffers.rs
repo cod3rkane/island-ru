@@ -13,16 +13,23 @@ use gl::types::{ GLuint, GLenum, GLvoid, GLsizeiptr, GLint, GLsizei };
 extern crate gl;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
+pub enum BufferRenderType {
+    DRAW_ELEMENTS,
+    DRAW_ELEMENTS_INSTANCED,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Buffer {
     pub vao_id: GLuint,
     pub vertices_vbo: BufferObject,
     pub colors_vbo: BufferObject,
     pub indices_vbo: BufferObject,
+    pub render_type: BufferRenderType,
     // @TODO: add bufferData here
 }
 
 impl Buffer {
-    pub fn new() -> Buffer {
+    pub fn new(render_type: BufferRenderType) -> Buffer {
         let mut vao_id: GLuint = 0;
 
         unsafe {
@@ -34,6 +41,7 @@ impl Buffer {
             vertices_vbo: BufferObject::new(gl::ARRAY_BUFFER),
             colors_vbo: BufferObject::new(gl::ARRAY_BUFFER),
             indices_vbo: BufferObject::new(gl::ELEMENT_ARRAY_BUFFER),
+            render_type,
         }
     }
 
