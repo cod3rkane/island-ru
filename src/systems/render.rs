@@ -1,14 +1,15 @@
 use gl;
 extern crate nalgebra_glm as glm;
 
+use crate::components::entity::Entity;
+use crate::core::buffers::{Buffer, BufferRenderType};
 use crate::core::game_state::GameState;
-use crate::components::entity::{ Entity };
-use std::ffi::{ CStr, CString };
+use std::ffi::{CStr, CString};
 
 macro_rules! c_str {
     ($literal:expr) => {
         CStr::from_bytes_with_nul_unchecked(concat!($literal, "\0").as_bytes())
-    }
+    };
 }
 
 pub fn render_system(game_state: &mut GameState) {
@@ -17,42 +18,80 @@ pub fn render_system(game_state: &mut GameState) {
     }
 
     for buffer in &mut game_state.buffers {
-        buffer.bind();
+        match buffer.render_type {
+            BufferRenderType::DRAW_ELEMENTS => {
+                buffer.bind();
 
-        buffer.vertices_vbo.bind();
-        buffer.vertices_vbo.set_data(
-            (game_state.buffer_data.vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-            game_state.buffer_data.vertices.as_ptr() as *const gl::types::GLvoid,
-        );
-        buffer.vertices_vbo.set_vertex_attr(0, 3, (3 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
+                buffer.vertices_vbo.bind();
+                buffer.vertices_vbo.set_data(
+                    (game_state.buffer_data.vertices.len() * std::mem::size_of::<f32>())
+                        as gl::types::GLsizeiptr,
+                    game_state.buffer_data.vertices.as_ptr() as *const gl::types::GLvoid,
+                );
+                buffer.vertices_vbo.set_vertex_attr(
+                    0,
+                    3,
+                    (3 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
+                );
 
-        buffer.colors_vbo.bind();
-        buffer.colors_vbo.set_data(
-            (game_state.buffer_data.colors.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-            game_state.buffer_data.colors.as_ptr() as *const gl::types::GLvoid,
-        );
-        buffer.colors_vbo.set_vertex_attr(1, 4, (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei);
+                buffer.colors_vbo.bind();
+                buffer.colors_vbo.set_data(
+                    (game_state.buffer_data.colors.len() * std::mem::size_of::<f32>())
+                        as gl::types::GLsizeiptr,
+                    game_state.buffer_data.colors.as_ptr() as *const gl::types::GLvoid,
+                );
+                buffer.colors_vbo.set_vertex_attr(
+                    1,
+                    4,
+                    (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
+                );
 
-        buffer.indices_vbo.bind();
-        buffer.indices_vbo.set_data(
-            (game_state.buffer_data.indices.len() * std::mem::size_of::<gl::types::GLfloat>()) as gl::types::GLsizeiptr,
-            game_state.buffer_data.indices.as_ptr() as *const gl::types::GLvoid,
-        );
+                buffer.indices_vbo.bind();
+                buffer.indices_vbo.set_data(
+                    (game_state.buffer_data.indices.len()
+                        * std::mem::size_of::<gl::types::GLfloat>())
+                        as gl::types::GLsizeiptr,
+                    game_state.buffer_data.indices.as_ptr() as *const gl::types::GLvoid,
+                );
 
-        let aspect: f32 = (game_state.window_width / game_state.window_height) as f32;
-        game_state.projection_matrix = glm::perspective(aspect, 45.0, 0.1, 100.0);
+                let aspect: f32 = (game_state.window_width / game_state.window_height) as f32;
+                game_state.projection_matrix = glm::perspective(aspect, 45.0, 0.1, 100.0);
 
-        unsafe {
-            let view_id = gl::GetUniformLocation(game_state.current_shader.program_id, CString::new("view_matrix").expect("view_matrix").as_ptr());
-            gl::UniformMatrix4fv(view_id, 1, gl::FALSE, game_state.view_matrix.as_ptr());
-            let projection_id = gl::GetUniformLocation(game_state.current_shader.program_id, CString::new("projection_matrix").expect("projection_matrix").as_ptr());
-            gl::UniformMatrix4fv(projection_id, 1, gl::FALSE, game_state.projection_matrix.as_ptr());
-            gl::Enable(gl::BLEND);
-            gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
+                unsafe {
+                    let view_id = gl::GetUniformLocation(
+                        game_state.current_shader.program_id,
+                        CString::new("view_matrix").expect("view_matrix").as_ptr(),
+                    );
+                    gl::UniformMatrix4fv(view_id, 1, gl::FALSE, game_state.view_matrix.as_ptr());
+                    let projection_id = gl::GetUniformLocation(
+                        game_state.current_shader.program_id,
+                        CString::new("projection_matrix")
+                            .expect("projection_matrix")
+                            .as_ptr(),
+                    );
+                    gl::UniformMatrix4fv(
+                        projection_id,
+                        1,
+                        gl::FALSE,
+                        game_state.projection_matrix.as_ptr(),
+                    );
+                    gl::Enable(gl::BLEND);
+                    gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
 
-            gl::DrawElements(gl::TRIANGLES, game_state.buffer_data.indices.len() as i32, gl::UNSIGNED_INT, std::ptr::null());
+                    gl::DrawElements(
+                        gl::TRIANGLES,
+                        game_state.buffer_data.indices.len() as i32,
+                        gl::UNSIGNED_INT,
+                        std::ptr::null(),
+                    );
 
-            gl::Disable(gl::BLEND);
+                    gl::Disable(gl::BLEND);
+                }
+            },
+            BufferRenderType::DRAW_ELEMENTS_INSTANCED => {
+                println!("render instanced");
+            }
+            _ => {}
         }
     }
 
