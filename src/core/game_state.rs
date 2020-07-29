@@ -14,10 +14,12 @@ pub struct GameState {
     pub projection_matrix: Mat4,
     pub window_width: i32,
     pub window_height: i32,
+    pub world: Option<Entity>,
 }
 
 pub fn initial_game_state() -> GameState {
-    let initial_buffer: Buffer = Buffer::new();
+    let _initial_buffer: Buffer = Buffer::new(BufferRenderType::DRAW_ELEMENTS);
+    let _world_buffer: Buffer = Buffer::new(BufferRenderType::DRAW_ELEMENTS_INSTANCED);
     let current_shader: Shader = create_shader("src/resources/vertex.glsl", "src/resources/fragment.glsl");
     let mut _triangle_a = Entity::new_square(vec3(0.5, -0.5, 0.0));
     _triangle_a.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
@@ -39,12 +41,13 @@ pub fn initial_game_state() -> GameState {
 
     GameState {
         entities: vec![_triangle_a, _triangle_b],
-        buffers: vec![initial_buffer],
+        buffers: vec![_world_buffer, _initial_buffer],
         current_shader,
         buffer_data: BufferData::new(),
         view_matrix: _view_matrix,
         projection_matrix: _projection_matrix,
         window_width: 0,
         window_height: 0,
+        world: Some(Entity::new_world(vec3(0.0, 0.0, 0.0))),
     }
 }
