@@ -1,5 +1,6 @@
 use crate::components::{ physics::Physics, mesh::Mesh, tile::Tile, tile::TileType };
 use nalgebra_glm::{ Vec3, vec3 };
+use rand::Rng;
 
 #[derive(Debug, PartialEq)]
 pub struct Entity {
@@ -62,11 +63,12 @@ impl Entity {
                 0.14902, 0.901961, 0.545098, 1.0,
             ],
         };
-        let _tile: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(-0.5, 1.0, 0.0)));
-        let _tile2: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(1.0, -1.5, 0.0)));
-        let _tile3: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(-1.0, -0.5, 0.0)));
-        let _tile4: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(-2.0, 0.0, 0.0)));
-        let _tile5: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(2.0, 0.5, 0.0)));
+        let mut rng = rand::thread_rng();
+        let mut tiles = vec![];
+        for i in 0..3000 {
+            let _tile: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(rng.gen_range(0.0, 10.0), rng.gen_range(0.0, 10.0), 0.0)));
+            tiles.push(_tile);
+        }
 
         Entity {
             physics: Some(Physics::new(position)),
@@ -77,7 +79,7 @@ impl Entity {
                 0.5, 0.0, 0.0,
                 0.0, -0.5, 0.0,
             ],
-            tiles: Some(vec![_tile, _tile2, _tile3, _tile4, _tile5]),
+            tiles: Some(tiles),
         }
     }
 }
