@@ -9,6 +9,7 @@ pub struct GameState {
     pub entities: Vec<Entity>,
     pub buffers: Vec<Buffer>,
     pub current_shader: Shader,
+    pub world_shader: Shader,
     pub buffer_data: BufferData, // @TODO: this guy disappear, it will be inside the Buffer now.
     pub view_matrix: Mat4,
     pub projection_matrix: Mat4,
@@ -21,6 +22,7 @@ pub fn initial_game_state() -> GameState {
     let _initial_buffer: Buffer = Buffer::new(BufferRenderType::DRAW_ELEMENTS);
     let _world_buffer: Buffer = Buffer::new(BufferRenderType::DRAW_ELEMENTS_INSTANCED);
     let current_shader: Shader = create_shader("src/resources/vertex.glsl", "src/resources/fragment.glsl");
+    let world_shader: Shader = create_shader("src/resources/vertex_world.glsl", "src/resources/fragment.glsl");
     let mut _triangle_a = Entity::new_square(vec3(0.5, -0.5, 0.0));
     _triangle_a.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
     let mut _triangle_b = Entity::new_square(vec3(-100.0, 0.5, 0.0));
@@ -43,6 +45,7 @@ pub fn initial_game_state() -> GameState {
         entities: vec![_triangle_a, _triangle_b],
         buffers: vec![_world_buffer, _initial_buffer],
         current_shader,
+        world_shader,
         buffer_data: BufferData::new(),
         view_matrix: _view_matrix,
         projection_matrix: _projection_matrix,
