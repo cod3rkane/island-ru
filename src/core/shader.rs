@@ -28,6 +28,7 @@ pub fn create_program(vertex: GLuint, fragment: GLuint) -> GLuint {
 
         gl::BindAttribLocation(program, 0, CString::new("vertexPosition").expect("vertexPosition").as_ptr());
         gl::BindAttribLocation(program, 1, CString::new("vertexColor").expect("vertexColor").as_ptr());
+        gl::BindAttribLocation(program, 2, CString::new("instaceMatrix").expect("instaceMatrix").as_ptr());
 
         gl::LinkProgram(program);
     }
