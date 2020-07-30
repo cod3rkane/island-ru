@@ -2,9 +2,9 @@ use gl;
 extern crate nalgebra_glm as glm;
 
 use crate::components::entity::Entity;
+use crate::components::tile::*;
 use crate::core::buffers::{Buffer, BufferRenderType};
 use crate::core::game_state::GameState;
-use crate::components::tile::*;
 use std::ffi::{CStr, CString};
 
 macro_rules! c_str {
@@ -128,24 +128,42 @@ pub fn render_system(game_state: &mut GameState) {
                     );
 
                     let vec4_size = (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
+                    let mat4_size = (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
                     buffer.transformations_vbo.unwrap().bind();
                     buffer.transformations_vbo.unwrap().set_data(
-                        (36 * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+                        (game_state
+                            .world
+                            .as_ref()
+                            .unwrap()
+                            .tiles
+                            .as_ref()
+                            .unwrap()
+                            .len()) as isize
+                            * mat4_size as isize,
                         std::ptr::null(),
                     );
 
-                    let tile_1 = game_state.world.as_ref().unwrap().tiles.as_ref().unwrap().get(0);
-                    let size_1 = 16 * std::mem::size_of::<f32>();
-                    let data = tile_1.as_ref().unwrap().physics.transform.as_ptr();
-                    buffer.transformations_vbo.unwrap().set_sub_data(0, (size_1) as gl::types::GLsizeiptr, (data) as *const gl::types::GLvoid);
+                    let items = game_state
+                        .world
+                        .as_ref()
+                        .unwrap()
+                        .tiles
+                        .as_ref()
+                        .unwrap()
+                        .iter()
+                        .enumerate();
 
-                    let tile_2 = game_state.world.as_ref().unwrap().tiles.as_ref().unwrap().get(1);
-                    let data_2 = tile_2.as_ref().unwrap().physics.transform.as_ptr();
-                    buffer.transformations_vbo.unwrap().set_sub_data(size_1 as gl::types::GLintptr, (size_1) as gl::types::GLsizeiptr, (data_2) as *const gl::types::GLvoid);
-
-                    // for (i, tile) in game_state.world.as_ref().unwrap().tiles.as_ref().unwrap().iter().enumerate() {
-                    //     buffer.transformations_vbo.unwrap().set_sub_data((i * std::mem::size_of::<glm::Mat4>()) as gl::types::GLintptr, (std::mem::size_of::<glm::Mat4>()) as gl::types::GLsizeiptr, tile.physics.transform.as_ptr() as *const gl::types::GLvoid);
-                    // }
+                    for (i, tile) in items {
+                        let offset = match i {
+                            0 => 0 as isize,
+                            _ => (i * mat4_size as usize) as isize,
+                        };
+                        buffer.transformations_vbo.unwrap().set_sub_data(
+                            offset,
+                            (mat4_size) as gl::types::GLsizeiptr,
+                            (tile.physics.transform.as_ptr()) as *const gl::types::GLvoid,
+                        );
+                    }
 
                     buffer.transformations_vbo.unwrap().set_vertex_attr_pointer(
                         2,
@@ -211,7 +229,14 @@ pub fn render_system(game_state: &mut GameState) {
                             game_state.world.as_ref().unwrap().mesh.indices.len() as i32,
                             gl::UNSIGNED_INT,
                             std::ptr::null(),
-                            2,
+                            game_state
+                                .world
+                                .as_ref()
+                                .unwrap()
+                                .tiles
+                                .as_ref()
+                                .unwrap()
+                                .len() as i32,
                         );
 
                         gl::Disable(gl::BLEND);
