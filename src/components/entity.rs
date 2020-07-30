@@ -63,8 +63,10 @@ impl Entity {
             ],
         };
         let _tile: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(-0.5, 1.0, 0.0)));
-        let _tile2: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(1.0, 0.0, 0.0)));
-        let _tile3: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(0.0, 0.0, 0.0)));
+        let _tile2: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(1.0, -1.5, 0.0)));
+        let _tile3: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(-1.0, -0.5, 0.0)));
+        let _tile4: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(-2.0, 0.0, 0.0)));
+        let _tile5: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(2.0, 0.5, 0.0)));
 
         Entity {
             physics: Some(Physics::new(position)),
@@ -75,7 +77,7 @@ impl Entity {
                 0.5, 0.0, 0.0,
                 0.0, -0.5, 0.0,
             ],
-            tiles: Some(vec![_tile, _tile2, _tile3]),
+            tiles: Some(vec![_tile, _tile2, _tile3, _tile4, _tile5]),
         }
     }
 }
