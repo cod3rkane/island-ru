@@ -29,6 +29,8 @@
     - https://crates.io/crates/nalgebra
     - https://crates.io/crates/nalgebra-glm
 
+- GUI
+    - https://crates.io/crates/imgui
 
 
 ### TODO: https://trello.com/b/E4eq5bgb/island-game
