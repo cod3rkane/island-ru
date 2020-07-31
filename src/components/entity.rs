@@ -46,10 +46,10 @@ impl Entity {
     pub fn new_world(position: Vec3) -> Entity {
         let _square = Mesh {
             vertices: vec![
-                -0.5, 0.0, 0.0,
-                0.0, 0.5, 0.0,
-                0.5, 0.0, 0.0,
-                0.0, -0.5, 0.0,
+                -1.0, 0.0, 0.0,
+                0.0, 1.0, 0.0,
+                1.0, 0.0, 0.0,
+                0.0, -1.0, 0.0,
             ],
             indices: vec![
                 0, 1, 2,
@@ -62,11 +62,8 @@ impl Entity {
                 0.14902, 0.901961, 0.545098, 1.0,
             ],
         };
-        let _tile: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(-0.5, 1.0, 0.0)));
-        let _tile2: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(1.0, -1.5, 0.0)));
-        let _tile3: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(-1.0, -0.5, 0.0)));
-        let _tile4: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(-2.0, 0.0, 0.0)));
-        let _tile5: Tile = Tile::new(TileType::GRASS, Physics::new(vec3(2.0, 0.5, 0.0)));
+        let _tile: Tile = Tile::new(TileType::GRASS, &mut Physics::new(vec3(0.4, 0.0, 0.0)));
+        let _tile2: Tile = Tile::new(TileType::GRASS, &mut Physics::new(vec3(0.0, 0.0, 0.0)));
 
         Entity {
             physics: Some(Physics::new(position)),
@@ -77,7 +74,7 @@ impl Entity {
                 0.5, 0.0, 0.0,
                 0.0, -0.5, 0.0,
             ],
-            tiles: Some(vec![_tile, _tile2, _tile3, _tile4, _tile5]),
+            tiles: Some(vec![_tile, _tile2]),
         }
     }
 }
