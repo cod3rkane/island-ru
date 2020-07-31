@@ -16,10 +16,11 @@ pub struct Tile {
 }
 
 impl Tile {
-    pub fn new(kind: TileType, physics: Physics) -> Tile {
+    pub fn new(kind: TileType, physics: &mut Physics) -> Tile {
+        physics.scale(vec3(0.2, 0.2, 0.0));
         Tile {
             kind,
-            physics,
+            physics: *physics,
         }
     }
 }
