@@ -33,7 +33,7 @@ pub fn initial_game_state() -> GameState {
         0.0, 0.0, 1.0, 0.0,
         0.0, 0.0, 0.0, 1.0,
     );
-    _view_matrix = translate(&mut _view_matrix, &vec3(0.0, 0.0, -3.0));
+    _view_matrix = translate(&mut _view_matrix, &vec3(0.0, 0.0, -5.0));
     let mut _projection_matrix: Mat4 = mat4(
         1.0, 0.0, 0.0, 0.0,
         0.0, 1.0, 0.0, 0.0,
