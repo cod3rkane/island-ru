@@ -1,4 +1,4 @@
-use nalgebra_glm::{ Vec3, Mat4, mat4, translate, rotate_z, scale };
+use nalgebra_glm::{ Vec3, vec1, Mat4, mat4, translate, rotate_z, scale, radians };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Physics {
@@ -24,7 +24,8 @@ impl Physics {
     }
 
     pub fn rotate_z(&mut self, angle: f32) {
-        self.transform = rotate_z(&mut self.transform, angle);
+        let radians = radians(&vec1(angle));
+        self.transform = rotate_z(&mut self.transform, radians.x);
     }
 
     pub fn translate(&mut self, position: Vec3) {
