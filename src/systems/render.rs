@@ -197,6 +197,8 @@ pub fn render_system(game_state: &mut GameState) {
                         gl::VertexAttribDivisor(5, 1);
                     }
 
+                    let view_matrix_t: glm::Mat4 = game_state.view_matrix * game_state.world.as_ref().unwrap().physics.unwrap().transform;
+
                     unsafe {
                         gl::UseProgram(game_state.world_shader.program_id);
                         let view_id = gl::GetUniformLocation(
@@ -207,7 +209,7 @@ pub fn render_system(game_state: &mut GameState) {
                             view_id,
                             1,
                             gl::FALSE,
-                            game_state.view_matrix.as_ptr(),
+                            view_matrix_t.as_ptr(),
                         );
                         let projection_id = gl::GetUniformLocation(
                             game_state.world_shader.program_id,
