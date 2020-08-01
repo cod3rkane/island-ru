@@ -7,7 +7,7 @@ pub fn physics_system(game_state: &mut GameState, deltatime: f64) {
     for item in &mut game_state.entities {
         let mut index: usize = 0;
         let mut _position: glm::Vec4 = glm::vec4(0.0, 0.0, 0.0, 0.0);
-        item.physics.as_mut().unwrap().rotate_z(0.01);
+        item.physics.as_mut().unwrap().rotate_z(2.0);
 
         loop {
             if index == item.mesh.vertices.len() {
