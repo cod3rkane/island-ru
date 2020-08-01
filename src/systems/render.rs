@@ -105,17 +105,37 @@ pub fn render_system(game_state: &mut GameState) {
                     );
 
                     buffer.colors_vbo.bind();
-                    buffer.colors_vbo.set_data(
-                        (game_state.world.as_ref().unwrap().mesh.colors.len()
-                            * std::mem::size_of::<f32>())
-                            as gl::types::GLsizeiptr,
-                        game_state.world.as_ref().unwrap().mesh.colors.as_ptr()
-                            as *const gl::types::GLvoid,
-                    );
-                    buffer.colors_vbo.set_vertex_attr(
+                    const vec4_size: i32 = (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
+                    const colors_size: i32 = 4 * vec4_size;
+                    let tiles_len = (game_state
+                        .world
+                        .as_ref()
+                        .unwrap()
+                        .tiles
+                        .as_ref()
+                        .unwrap()
+                        .len());
+
+                    let mut colors_v: Vec<f32> = vec![];
+
+                    for x in 0..36 {
+                        colors_v.extend(
+                            vec![
+                                0.14902, 0.901961, 0.545098, 1.0,
+                            ]
+                            .iter()
+                            .cloned(),
+                        );
+                    }
+                    buffer.colors_vbo.set_vertex_attr_pointer(
                         1,
                         4,
                         (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
+                        std::ptr::null(),
+                    );
+                    buffer.colors_vbo.set_data(
+                        (colors_v.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+                        colors_v.as_ptr() as *const gl::types::GLvoid,
                     );
 
                     buffer.indices_vbo.bind();
@@ -127,7 +147,6 @@ pub fn render_system(game_state: &mut GameState) {
                             as *const gl::types::GLvoid,
                     );
 
-                    let vec4_size = (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
                     let mat4_size = (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
                     buffer.transformations_vbo.unwrap().bind();
                     buffer.transformations_vbo.unwrap().set_data(
@@ -142,7 +161,6 @@ pub fn render_system(game_state: &mut GameState) {
                             * mat4_size as isize,
                         std::ptr::null(),
                     );
-
                     let items = game_state
                         .world
                         .as_ref()
@@ -191,13 +209,21 @@ pub fn render_system(game_state: &mut GameState) {
                     );
 
                     unsafe {
+                        gl::VertexAttribDivisor(1, 1);
                         gl::VertexAttribDivisor(2, 1);
                         gl::VertexAttribDivisor(3, 1);
                         gl::VertexAttribDivisor(4, 1);
                         gl::VertexAttribDivisor(5, 1);
                     }
 
-                    let view_matrix_t: glm::Mat4 = game_state.view_matrix * game_state.world.as_ref().unwrap().physics.unwrap().transform;
+                    let view_matrix_t: glm::Mat4 = game_state.view_matrix
+                        * game_state
+                            .world
+                            .as_ref()
+                            .unwrap()
+                            .physics
+                            .unwrap()
+                            .transform;
 
                     unsafe {
                         gl::UseProgram(game_state.world_shader.program_id);
@@ -205,12 +231,7 @@ pub fn render_system(game_state: &mut GameState) {
                             game_state.world_shader.program_id,
                             CString::new("view_matrix").expect("view_matrix").as_ptr(),
                         );
-                        gl::UniformMatrix4fv(
-                            view_id,
-                            1,
-                            gl::FALSE,
-                            view_matrix_t.as_ptr(),
-                        );
+                        gl::UniformMatrix4fv(view_id, 1, gl::FALSE, view_matrix_t.as_ptr());
                         let projection_id = gl::GetUniformLocation(
                             game_state.world_shader.program_id,
                             CString::new("projection_matrix")
