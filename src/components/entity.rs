@@ -62,7 +62,7 @@ impl Entity {
                 0.14902, 0.901961, 0.545098, 1.0,
             ],
         };
-        let rows = 7;
+        let rows = 6;
         let columns = 6;
         let tile_width = 0.404;
         let tile_height = 0.405;
@@ -77,9 +77,11 @@ impl Entity {
                 tiles.push(Tile::new(TileType::GRASS, &mut Physics::new(vec3(x, y, 0.0))));
             }
         }
+        let mut world_physics = Physics::new(position);
+        world_physics.rotate_z(45.0);
 
         Entity {
-            physics: Some(Physics::new(position)),
+            physics: Some(world_physics),
             mesh: _square,
             t_vertices: vec![
                 -0.5, 0.0, 0.0,
