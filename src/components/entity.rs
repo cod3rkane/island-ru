@@ -70,15 +70,17 @@ impl Entity {
 
         for i in 0..rows {
             for j in 0..columns {
-                let x = (j as f32) * tile_width;
-                let y = (i as f32) * tile_height;
+                let x = (i as f32) * tile_width;
+                let y = (j as f32) * tile_height;
                 // tile_type = level_data[i][j];
+                let tile_type: TileType = if i == 0 && j == 0 { TileType::DIRT } else { TileType::GRASS };
 
-                tiles.push(Tile::new(TileType::GRASS, &mut Physics::new(vec3(x, y, 0.0))));
+                tiles.push(Tile::new(tile_type, &mut Physics::new(vec3(x, y, 0.0))));
             }
         }
         let mut world_physics = Physics::new(position);
-        world_physics.rotate_z(45.0);
+        world_physics.rotate_z(-135.0);
+
 
         Entity {
             physics: Some(world_physics),
