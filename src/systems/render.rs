@@ -116,17 +116,6 @@ pub fn render_system(game_state: &mut GameState) {
                         .unwrap()
                         .len());
 
-                    let mut colors_v: Vec<f32> = vec![];
-
-                    for x in 0..36 {
-                        colors_v.extend(
-                            vec![
-                                0.14902, 0.901961, 0.545098, 1.0,
-                            ]
-                            .iter()
-                            .cloned(),
-                        );
-                    }
                     buffer.colors_vbo.set_vertex_attr_pointer(
                         1,
                         4,
@@ -134,9 +123,35 @@ pub fn render_system(game_state: &mut GameState) {
                         std::ptr::null(),
                     );
                     buffer.colors_vbo.set_data(
-                        (colors_v.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
-                        colors_v.as_ptr() as *const gl::types::GLvoid,
+                        ((tiles_len * 4) * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+                        std::ptr::null(),
                     );
+
+                    for (i, tile) in game_state
+                        .world
+                        .as_ref()
+                        .unwrap()
+                        .tiles
+                        .as_ref()
+                        .unwrap()
+                        .iter()
+                        .enumerate()
+                    {
+                        let offset = match i {
+                            0 => 0 as isize,
+                            _ => (i * vec4_size as usize) as isize,
+                        };
+                        let color: Vec<f32> = match tile.kind {
+                            TileType::DIRT => vec![0.54902, 0.290196, 0.168627, 1.0],
+                            TileType::GRASS => vec![0.25098, 0.909804, 0.411765, 1.0],
+                            _ => vec![1.0, 0.121569, 0.152941, 1.0],
+                        };
+                        buffer.colors_vbo.set_sub_data(
+                            offset,
+                            vec4_size as gl::types::GLsizeiptr,
+                            (color.as_ptr()) as *const gl::types::GLvoid,
+                        );
+                    }
 
                     buffer.indices_vbo.bind();
                     buffer.indices_vbo.set_data(
