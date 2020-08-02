@@ -66,7 +66,6 @@ fn handle_window_events(window: &mut glfw::Window, event: glfw::WindowEvent, gam
         glfw::WindowEvent::FramebufferSize(width, height) => {
             game_state.window_width = width;
             game_state.window_height = height;
-            unsafe { gl::Viewport(0, 0, width, height) }
         }
         glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => {
             window.set_should_close(true);
