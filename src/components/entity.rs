@@ -1,5 +1,5 @@
 use crate::components::{ physics::Physics, mesh::Mesh, tile::Tile, tile::TileType };
-use nalgebra_glm::{ Vec3, vec3 };
+use nalgebra_glm::{ Vec3, vec3, vec2 };
 
 #[derive(Debug, PartialEq)]
 pub struct Entity {
@@ -70,12 +70,10 @@ impl Entity {
 
         for i in 0..rows {
             for j in 0..columns {
-                let x = (i as f32) * tile_width;
-                let y = (j as f32) * tile_height;
-                // tile_type = level_data[i][j];
-                let tile_type: TileType = if i == 0 && j == 0 { TileType::DIRT } else { TileType::GRASS };
-
-                tiles.push(Tile::new(tile_type, &mut Physics::new(vec3(x, y, 0.0))));
+                let x = (j as f32) * tile_width;
+                let y = (i as f32) * tile_height;
+                let tile_type: TileType = if i == 0 { TileType::DIRT } else { TileType::GRASS };
+                tiles.push(Tile::new(tile_type, &mut Physics::new(vec3(x, y, 0.0)), vec2(i as f32, j as f32)));
             }
         }
         let mut world_physics = Physics::new(position);
