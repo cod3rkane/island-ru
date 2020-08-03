@@ -1,17 +1,10 @@
 use gl;
 extern crate nalgebra_glm as glm;
 
-use crate::components::entity::Entity;
 use crate::components::tile::*;
-use crate::core::buffers::{Buffer, BufferRenderType};
+use crate::core::buffers::{BufferRenderType};
 use crate::core::game_state::GameState;
-use std::ffi::{CStr, CString};
-
-macro_rules! c_str {
-    ($literal:expr) => {
-        CStr::from_bytes_with_nul_unchecked(concat!($literal, "\0").as_bytes())
-    };
-}
+use std::ffi::{CString};
 
 pub fn render_system(game_state: &mut GameState) {
     let aspect: f32 = (game_state.window_width / game_state.window_height) as f32;
@@ -19,7 +12,7 @@ pub fn render_system(game_state: &mut GameState) {
 
     for buffer in &mut game_state.buffers {
         match buffer.render_type {
-            BufferRenderType::DRAW_ELEMENTS => {
+            BufferRenderType::DrawElements => {
                 buffer.bind();
 
                 buffer.vertices_vbo.bind();
@@ -54,8 +47,6 @@ pub fn render_system(game_state: &mut GameState) {
                     std::ptr::null(),
                 );
 
-                const vec4_size: i32 = (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
-                const MAT4_SIZE: i32 = (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
                 let mut indices_num: isize = 0;
                 let mut indice_max: isize = 0;
                 for (i, e) in game_state.entities.iter().enumerate() {
@@ -156,7 +147,7 @@ pub fn render_system(game_state: &mut GameState) {
                     gl::Disable(gl::BLEND);
                 }
             }
-            BufferRenderType::DRAW_ELEMENTS_INSTANCED => {
+            BufferRenderType::DrawElementsInstanced => {
                 if game_state.world.is_some() {
                     buffer.bind();
 
@@ -175,16 +166,15 @@ pub fn render_system(game_state: &mut GameState) {
                     );
 
                     buffer.colors_vbo.bind();
-                    const vec4_size: i32 = (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
-                    const colors_size: i32 = 4 * vec4_size;
-                    let tiles_len = (game_state
+                    const VEC4_SIZE: i32 = (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
+                    let tiles_len = game_state
                         .world
                         .as_ref()
                         .unwrap()
                         .tiles
                         .as_ref()
                         .unwrap()
-                        .len());
+                        .len();
 
                     buffer.colors_vbo.set_vertex_attr_pointer(
                         1,
@@ -209,7 +199,7 @@ pub fn render_system(game_state: &mut GameState) {
                     {
                         let offset = match i {
                             0 => 0 as isize,
-                            _ => (i * vec4_size as usize) as isize,
+                            _ => (i * VEC4_SIZE as usize) as isize,
                         };
                         let color: Vec<f32> = match tile.kind {
                             TileType::DIRT => vec![0.54902, 0.290196, 0.168627, 1.0],
@@ -218,7 +208,7 @@ pub fn render_system(game_state: &mut GameState) {
                         };
                         buffer.colors_vbo.set_sub_data(
                             offset,
-                            vec4_size as gl::types::GLsizeiptr,
+                            VEC4_SIZE as gl::types::GLsizeiptr,
                             (color.as_ptr()) as *const gl::types::GLvoid,
                         );
                     }
@@ -278,19 +268,19 @@ pub fn render_system(game_state: &mut GameState) {
                         3,
                         4,
                         (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
-                        (1 * vec4_size) as *const gl::types::GLvoid,
+                        (1 * VEC4_SIZE) as *const gl::types::GLvoid,
                     );
                     buffer.transformations_vbo.unwrap().set_vertex_attr_pointer(
                         4,
                         4,
                         (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
-                        (2 * vec4_size) as *const gl::types::GLvoid,
+                        (2 * VEC4_SIZE) as *const gl::types::GLvoid,
                     );
                     buffer.transformations_vbo.unwrap().set_vertex_attr_pointer(
                         5,
                         4,
                         (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
-                        (3 * vec4_size) as *const gl::types::GLvoid,
+                        (3 * VEC4_SIZE) as *const gl::types::GLvoid,
                     );
 
                     unsafe {
@@ -350,8 +340,7 @@ pub fn render_system(game_state: &mut GameState) {
                         gl::Disable(gl::BLEND);
                     }
                 }
-            }
-            _ => {}
+            },
         }
     }
 
