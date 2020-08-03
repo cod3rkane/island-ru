@@ -23,10 +23,12 @@ pub fn render_system(game_state: &mut GameState) {
                 buffer.bind();
 
                 buffer.vertices_vbo.bind();
+                // 12 equal the number of vertices used to draw a rect
+                // @TODO: maybe that'll change in the near future
                 buffer.vertices_vbo.set_data(
-                    (game_state.buffer_data.vertices.len() * std::mem::size_of::<f32>())
+                    (game_state.entities.len() * 12 * std::mem::size_of::<f32>())
                         as gl::types::GLsizeiptr,
-                    game_state.buffer_data.vertices.as_ptr() as *const gl::types::GLvoid,
+                    std::ptr::null(),
                 );
                 buffer.vertices_vbo.set_vertex_attr(
                     0,
@@ -36,9 +38,9 @@ pub fn render_system(game_state: &mut GameState) {
 
                 buffer.colors_vbo.bind();
                 buffer.colors_vbo.set_data(
-                    (game_state.buffer_data.colors.len() * std::mem::size_of::<f32>())
+                    (game_state.entities.len() * 16 * std::mem::size_of::<f32>())
                         as gl::types::GLsizeiptr,
-                    game_state.buffer_data.colors.as_ptr() as *const gl::types::GLvoid,
+                    std::ptr::null(),
                 );
                 buffer.colors_vbo.set_vertex_attr(
                     1,
@@ -48,11 +50,79 @@ pub fn render_system(game_state: &mut GameState) {
 
                 buffer.indices_vbo.bind();
                 buffer.indices_vbo.set_data(
-                    (game_state.buffer_data.indices.len()
-                        * std::mem::size_of::<gl::types::GLfloat>())
-                        as gl::types::GLsizeiptr,
-                    game_state.buffer_data.indices.as_ptr() as *const gl::types::GLvoid,
+                    (game_state.entities.len() * 6 * std::mem::size_of::<f32>()) as isize,
+                    std::ptr::null(),
                 );
+
+                const vec4_size: i32 = (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
+                const MAT4_SIZE: i32 = (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
+                let mut indices_num: isize = 0;
+                let mut indice_max: isize = 0;
+                for (i, e) in game_state.entities.iter().enumerate() {
+                    buffer.vertices_vbo.bind();
+                    let mut vertices_t: Vec<f32> = vec![];
+                    let mut index: usize = 0;
+                    let mut _position: glm::Vec4 = glm::vec4(0.0, 0.0, 0.0, 0.0);
+
+                    loop {
+                        if index == e.mesh.vertices.len() {
+                            break;
+                        }
+
+                        _position = e.physics.as_ref().unwrap().transform * glm::vec4(
+                            e.mesh.vertices[index],
+                            e.mesh.vertices[index + 1],
+                            e.mesh.vertices[index + 2],
+                            1.0,
+                        );
+
+                        vertices_t.push(_position.x);
+                        vertices_t.push(_position.y);
+                        vertices_t.push(_position.z);
+
+                        index += 3;
+                    }
+
+                    buffer.vertices_vbo.set_sub_data(
+                        (i * e.mesh.vertices.len() * std::mem::size_of::<f32>()) as isize,
+                        (e.mesh.vertices.len() * std::mem::size_of::<f32>())
+                            as gl::types::GLsizeiptr,
+                        vertices_t.as_ptr() as *const gl::types::GLvoid,
+                    );
+
+                    buffer.colors_vbo.bind();
+                    buffer.colors_vbo.set_sub_data(
+                        (i * e.mesh.colors.len() * std::mem::size_of::<f32>()) as isize,
+                        (e.mesh.colors.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+                        e.mesh.colors.as_ptr() as *const gl::types::GLvoid,
+                    );
+
+                    let mut indices: Vec<i32> = vec![];
+
+                    buffer.indices_vbo.bind();
+                    for indice in e.mesh.indices.iter() {
+                        let indice_index: i32 = match i {
+                            0 => *indice,
+                            _ => *indice + indice_max as i32,
+                        };
+
+                        indices.push(indice_index);
+                    }
+                    let test: Vec<i32> = match i {
+                        0 => vec![0, 1, 2, 0, 2, 3],
+                        _ => vec![4, 5, 6, 4, 6, 7],
+                    };
+
+                    buffer.indices_vbo.set_sub_data(
+                        (i * e.mesh.indices.len() * std::mem::size_of::<f32>()) as isize,
+                        (e.mesh.indices.len() * std::mem::size_of::<f32>())
+                            as gl::types::GLsizeiptr,
+                        test.as_ptr() as *const gl::types::GLvoid,
+                    );
+
+                    indices_num = e.mesh.indices.len() as isize + indices_num;
+                    indice_max = *e.mesh.indices.iter().max().unwrap() as isize + 1;
+                }
 
                 unsafe {
                     gl::UseProgram(game_state.current_shader.program_id);
@@ -78,7 +148,7 @@ pub fn render_system(game_state: &mut GameState) {
 
                     gl::DrawElements(
                         gl::TRIANGLES,
-                        game_state.buffer_data.indices.len() as i32,
+                        indices_num as i32,
                         gl::UNSIGNED_INT,
                         std::ptr::null(),
                     );
