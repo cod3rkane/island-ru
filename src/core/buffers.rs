@@ -14,8 +14,8 @@ extern crate gl;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum BufferRenderType {
-    DRAW_ELEMENTS,
-    DRAW_ELEMENTS_INSTANCED,
+    DrawElements,
+    DrawElementsInstanced,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -38,7 +38,7 @@ impl Buffer {
         }
 
         let transformations_vbo = match render_type {
-            BufferRenderType::DRAW_ELEMENTS_INSTANCED => Some(BufferObject::new(gl::ARRAY_BUFFER)),
+            BufferRenderType::DrawElementsInstanced => Some(BufferObject::new(gl::ARRAY_BUFFER)),
             _ => None,
         };
 
