@@ -28,10 +28,6 @@ impl Physics {
         self.transform = rotate_z(&mut self.transform, radians.x);
     }
 
-    pub fn translate(&mut self, position: Vec3) {
-        self.transform = translate(&mut self.transform, &position);
-    }
-
     pub fn scale(&mut self, s: Vec3) {
         self.transform = scale(&mut self.transform, &s);
     }
