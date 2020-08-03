@@ -51,7 +51,7 @@ fn main() {
             handle_window_events(&mut window, e, &mut _game_state);
         }
 
-        systems::physics::physics_system(&mut _game_state, glfw.get_time());
+        //systems::physics::physics_system(&mut _game_state, glfw.get_time());
         systems::render::render_system(&mut _game_state);
 
         window.swap_buffers();
