@@ -1,4 +1,4 @@
-use nalgebra_glm::{ Vec3, Vec2, vec2, vec3, Mat4, mat4 };
+use nalgebra_glm::{ Vec2, vec3 };
 use crate::components::physics::{ Physics };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
