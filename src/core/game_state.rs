@@ -23,9 +23,9 @@ pub fn initial_game_state() -> GameState {
     let _world_buffer: Buffer = Buffer::new(BufferRenderType::DRAW_ELEMENTS_INSTANCED);
     let current_shader: Shader = create_shader("src/resources/vertex.glsl", "src/resources/fragment.glsl");
     let world_shader: Shader = create_shader("src/resources/vertex_world.glsl", "src/resources/fragment.glsl");
-    let mut _triangle_a = Entity::new_square(vec3(-60.0, -0.5, 0.0));
+    let mut _triangle_a = Entity::new_square(vec3(4.0, 0.0, 0.0));
     _triangle_a.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
-    let mut _triangle_b = Entity::new_square(vec3(-100.0, 0.5, 0.0));
+    let mut _triangle_b = Entity::new_square(vec3(2.4, 0.0, 0.0));
     _triangle_b.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
     let mut _view_matrix: Mat4 = mat4(
         1.0, 0.0, 0.0, 0.0,
