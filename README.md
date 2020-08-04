@@ -32,5 +32,8 @@
 - GUI
     - https://crates.io/crates/imgui
 
+- Image
+    - https://crates.io/crates/image
+
 
 ### TODO: https://trello.com/b/E4eq5bgb/island-game
