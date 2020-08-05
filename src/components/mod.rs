@@ -3,3 +3,4 @@ pub mod shader;
 pub mod entity;
 pub mod physics;
 pub mod tile;
+pub mod texture;
