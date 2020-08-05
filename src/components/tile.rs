@@ -1,5 +1,5 @@
 use nalgebra_glm::{ Vec2, vec3 };
-use crate::components::physics::{ Physics };
+use crate::components::{ physics::Physics, texture::Texture };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TileType {
@@ -14,6 +14,7 @@ pub struct Tile {
     pub kind: TileType,
     pub physics: Physics,
     pub grid_pos: Vec2,
+    pub texture: Option<Texture>,
 }
 
 impl Tile {
@@ -23,6 +24,7 @@ impl Tile {
             kind,
             physics: *physics,
             grid_pos: pos,
+            texture: None,
         }
     }
 }
