@@ -26,7 +26,6 @@ pub struct Buffer {
     pub indices_vbo: BufferObject,
     pub transformations_vbo: Option<BufferObject>,
     pub render_type: BufferRenderType,
-    // @TODO: add bufferData here
 }
 
 impl Buffer {
