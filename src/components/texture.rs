@@ -1,7 +1,8 @@
+use image::{ DynamicImage };
 use gl::types::{ GLuint };
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone)]
 pub struct Texture {
     pub coordinates: Vec<f32>,
-    pub textureID: GLuint,
+    pub image: Option<Box<DynamicImage>>,
 }

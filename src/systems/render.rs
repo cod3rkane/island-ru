@@ -30,13 +30,14 @@ pub fn render_system(game_state: &mut GameState) {
                 );
 
                 buffer.colors_vbo.bind();
+                // @TODO: texture coordinates comes here
                 buffer.colors_vbo.set_data(
                     (game_state.entities.len() * 16 * std::mem::size_of::<f32>())
                         as gl::types::GLsizeiptr,
                     std::ptr::null(),
                 );
                 buffer.colors_vbo.set_vertex_attr(
-                    1,
+                    2,
                     4,
                     (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
                 );
@@ -150,21 +151,32 @@ pub fn render_system(game_state: &mut GameState) {
             BufferRenderType::DrawElementsInstanced => {
                 if game_state.world.is_some() {
                     buffer.bind();
-
                     buffer.vertices_vbo.bind();
+                    let v: Vec<f32> = vec![
+                        1.0, 1.0, 0.0,        1.0, -1.0,
+                        1.0, -1.0, 0.0,         1.0, 0.0,
+                        -1.0, -1.0, 0.0,       0.0, 0.0,
+                        -1.0, 1.0, 0.0,        0.0, -1.0,
+                    ];
+                    let v2: Vec<f32> = vec![
+                        -1.0, 1.0, 0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0,
+                    ];
                     buffer.vertices_vbo.set_data(
-                        (game_state.world.as_ref().unwrap().mesh.vertices.len()
-                            * std::mem::size_of::<f32>())
+                        (v.len() * std::mem::size_of::<f32>())
                             as gl::types::GLsizeiptr,
-                        game_state.world.as_ref().unwrap().mesh.vertices.as_ptr()
-                            as *const gl::types::GLvoid,
+                        v.as_ptr() as *const gl::types::GLvoid,
                     );
                     buffer.vertices_vbo.set_vertex_attr(
                         0,
                         3,
-                        (3 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
+                        (5 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
                     );
-
+                    buffer.vertices_vbo.set_vertex_attr_pointer(
+                        1,
+                        2,
+                        (5 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
+                        (3 * std::mem::size_of::<f32>()) as *const gl::types::GLvoid,
+                    );
                     buffer.colors_vbo.bind();
                     const VEC4_SIZE: i32 = (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei;
                     let tiles_len = game_state
@@ -175,9 +187,8 @@ pub fn render_system(game_state: &mut GameState) {
                         .as_ref()
                         .unwrap()
                         .len();
-
                     buffer.colors_vbo.set_vertex_attr_pointer(
-                        1,
+                        2,
                         4,
                         (4 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
                         std::ptr::null(),
@@ -206,6 +217,7 @@ pub fn render_system(game_state: &mut GameState) {
                             TileType::GRASS => vec![0.25098, 0.909804, 0.411765, 1.0],
                             _ => vec![1.0, 0.121569, 0.152941, 1.0],
                         };
+
                         buffer.colors_vbo.set_sub_data(
                             offset,
                             VEC4_SIZE as gl::types::GLsizeiptr,
@@ -259,36 +271,36 @@ pub fn render_system(game_state: &mut GameState) {
                     }
 
                     buffer.transformations_vbo.unwrap().set_vertex_attr_pointer(
-                        2,
+                        3,
                         4,
                         (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
                         std::ptr::null(),
                     );
                     buffer.transformations_vbo.unwrap().set_vertex_attr_pointer(
-                        3,
+                        4,
                         4,
                         (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
                         (1 * VEC4_SIZE) as *const gl::types::GLvoid,
                     );
                     buffer.transformations_vbo.unwrap().set_vertex_attr_pointer(
-                        4,
+                        5,
                         4,
                         (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
                         (2 * VEC4_SIZE) as *const gl::types::GLvoid,
                     );
                     buffer.transformations_vbo.unwrap().set_vertex_attr_pointer(
-                        5,
+                        6,
                         4,
                         (16 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
                         (3 * VEC4_SIZE) as *const gl::types::GLvoid,
                     );
 
                     unsafe {
-                        gl::VertexAttribDivisor(1, 1);
                         gl::VertexAttribDivisor(2, 1);
                         gl::VertexAttribDivisor(3, 1);
                         gl::VertexAttribDivisor(4, 1);
                         gl::VertexAttribDivisor(5, 1);
+                        gl::VertexAttribDivisor(6, 1);
                     }
 
                     let view_matrix_t: glm::Mat4 = game_state.view_matrix
@@ -322,6 +334,10 @@ pub fn render_system(game_state: &mut GameState) {
                         gl::Enable(gl::BLEND);
                         gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
 
+                        gl::ActiveTexture(gl::TEXTURE0);
+                        gl::BindTexture(gl::TEXTURE_2D, game_state.world.as_ref().unwrap().texture.as_ref().unwrap().id);
+                        gl::Uniform1i(gl::GetUniformLocation(game_state.world_shader.program_id, CString::new("texture1").expect("texture1").as_ptr()), 0);
+
                         gl::DrawElementsInstanced(
                             gl::TRIANGLES,
                             game_state.world.as_ref().unwrap().mesh.indices.len() as i32,
@@ -338,6 +354,7 @@ pub fn render_system(game_state: &mut GameState) {
                         );
 
                         gl::Disable(gl::BLEND);
+                        gl::BindTexture(gl::TEXTURE_2D, 0);
                     }
                 }
             },

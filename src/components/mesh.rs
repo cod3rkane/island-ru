@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq)]
+#[derive(Clone)]
 pub struct Mesh {
     pub vertices: Vec<f32>,
     pub indices: Vec<i32>,

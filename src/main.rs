@@ -1,7 +1,5 @@
 extern crate glfw;
-
 use glfw::{ Action, Context, Key };
-
 extern crate gl;
 
 mod components;

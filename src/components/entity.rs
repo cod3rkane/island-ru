@@ -1,9 +1,14 @@
+extern crate image;
+use image::GenericImage;
+use image::GenericImageView;
+use std::path::Path;
 use crate::components::{
-    mesh::Mesh, physics::Physics, texture::Texture, tile::Tile, tile::TileType,
+    mesh::Mesh, physics::Physics, tile::Tile, tile::TileType,
 };
+use crate::core::{ texture::Texture };
 use nalgebra_glm::{vec2, vec3, Vec3};
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone)]
 pub struct Entity {
     pub physics: Option<Physics>,
     pub mesh: Mesh,
@@ -35,7 +40,7 @@ impl Entity {
             vertices: vec![
                 -1.0, 1.0, 0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0,
             ],
-            indices: vec![0, 1, 2, 1, 2, 3],
+            indices: vec![0, 1, 2, 0, 2, 3],
             colors: vec![
                 0.14902, 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0, 0.14902,
                 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0,
@@ -43,7 +48,7 @@ impl Entity {
         };
         let rows = 12;
         let columns = 12;
-        let tile_width = 0.404;
+        let tile_width = 0.405;
         let tile_height = 0.405;
         let mut tiles: Vec<Tile> = vec![];
 
@@ -64,13 +69,16 @@ impl Entity {
             }
         }
         let mut world_physics = Physics::new(position);
-        world_physics.rotate_z(-135.0);
+        //world_physics.rotate_z(-135.0);
+        let grass_img = image::open(&Path::new("src/resources/textures/dirt.png"))
+            .expect("Failed to load texture!");
+        let texture: Texture = Texture::new(Box::new(grass_img));
 
         Entity {
             physics: Some(world_physics),
             mesh: _square,
             tiles: Some(tiles),
-            texture: None,
+            texture: Some(texture),
         }
     }
 }
