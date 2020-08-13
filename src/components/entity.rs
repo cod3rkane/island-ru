@@ -38,7 +38,10 @@ impl Entity {
     pub fn new_world(position: Vec3) -> Entity {
         let _square = Mesh {
             vertices: vec![
-                -1.0, 1.0, 0.0, 1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0,
+                1.0, 1.0, 0.0,
+                1.0, -1.0, 0.0,
+                -1.0, -1.0, 0.0,
+                -1.0, 1.0, 0.0,
             ],
             indices: vec![0, 1, 2, 0, 2, 3],
             colors: vec![
@@ -48,15 +51,15 @@ impl Entity {
         };
         let rows = 12;
         let columns = 12;
-        let tile_width = 0.405;
-        let tile_height = 0.405;
+        let tile_width = 0.41;
+        let tile_height = 0.41;
         let mut tiles: Vec<Tile> = vec![];
 
         for i in 0..rows {
             for j in 0..columns {
                 let x = (j as f32) * tile_width;
                 let y = (i as f32) * tile_height;
-                let tile_type: TileType = if i == 0 {
+                let mut tile_type: TileType = if i == 0 || i == 11 && j == 11 {
                     TileType::DIRT
                 } else {
                     TileType::GRASS
@@ -69,8 +72,8 @@ impl Entity {
             }
         }
         let mut world_physics = Physics::new(position);
-        //world_physics.rotate_z(-135.0);
-        let grass_img = image::open(&Path::new("src/resources/textures/dirt.png"))
+        world_physics.rotate_z(-135.0);
+        let grass_img = image::open(&Path::new("src/resources/textures/tiles-textures.png"))
             .expect("Failed to load texture!");
         let texture: Texture = Texture::new(Box::new(grass_img));
 
