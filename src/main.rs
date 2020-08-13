@@ -33,10 +33,12 @@ fn main() {
     let mut _game_state: GameState = initial_game_state();
     _game_state.window_width = 1280;
     _game_state.window_height = 720;
+    _game_state.viewport_width = 1280;
+    _game_state.viewport_height = 720;
 
     while !window.should_close() {
         unsafe {
-            gl::Viewport(0, 0, _game_state.window_width, _game_state.window_height);
+            gl::Viewport(0, 0, _game_state.viewport_width, _game_state.viewport_height);
 
             gl::ClearColor(0.25098, 0.25098, 0.25098, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
@@ -62,8 +64,8 @@ fn main() {
 fn handle_window_events(window: &mut glfw::Window, event: glfw::WindowEvent, game_state: &mut GameState) {
     match event {
         glfw::WindowEvent::FramebufferSize(width, height) => {
-            game_state.window_width = width;
-            game_state.window_height = height;
+            game_state.viewport_width = width;
+            game_state.viewport_height = height;
         }
         glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => {
             window.set_should_close(true);
