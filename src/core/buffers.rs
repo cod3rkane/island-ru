@@ -11,6 +11,7 @@ use gl::{
 
 use gl::types::{ GLuint, GLenum, GLvoid, GLsizeiptr, GLint, GLsizei, GLintptr };
 extern crate gl;
+use crate::core::{ texture_buffer::TextureBufferObject };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum BufferRenderType {
@@ -25,6 +26,8 @@ pub struct Buffer {
     pub colors_vbo: BufferObject,
     pub indices_vbo: BufferObject,
     pub transformations_vbo: Option<BufferObject>,
+    pub textures_vbo: Option<BufferObject>,
+    pub textures_tbo: Option<TextureBufferObject>,
     pub render_type: BufferRenderType,
 }
 
@@ -48,6 +51,8 @@ impl Buffer {
             indices_vbo: BufferObject::new(gl::ELEMENT_ARRAY_BUFFER),
             transformations_vbo,
             render_type,
+            textures_vbo: Some(BufferObject::new(gl::TEXTURE_BUFFER)),
+            textures_tbo: Some(TextureBufferObject::new(gl::RG32F)),
         }
     }
 
@@ -159,19 +164,3 @@ impl BufferObject {
     }
 }
 
-#[derive(Debug, PartialEq)]
-pub struct BufferData {
-    pub vertices: Vec<f32>,
-    pub indices: Vec<i32>,
-    pub colors: Vec<f32>,
-}
-
-impl BufferData {
-    pub fn new() -> BufferData {
-        BufferData {
-            vertices: vec![],
-            indices: vec![],
-            colors: vec![],
-        }
-    }
-}
