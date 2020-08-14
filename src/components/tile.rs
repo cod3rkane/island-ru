@@ -3,10 +3,10 @@ use crate::components::{ physics::Physics };
 
 #[derive(Clone, Copy)]
 pub enum TileType {
-    GRASS,
-    WATER,
-    DIRT,
-    SAND,
+    GRASS = 129,
+    WATER = 130,
+    DIRT = 236,
+    SAND = 61,
 }
 
 #[derive(Clone)]
@@ -18,29 +18,14 @@ pub struct Tile {
 }
 
 impl Tile {
-    pub fn new(kind: TileType, physics: &mut Physics, pos: Vec2) -> Tile {
-        // @TODO: using TileType to get the coordinates from out coordinates handler
+    pub fn new(kind: TileType, physics: &mut Physics, pos: Vec2, texture_coods: Vec<f32>) -> Tile {
         physics.scale(vec3(0.2, 0.2, 0.0));
-        let texture_coords: Vec<f32> = match kind {
-            TileType::DIRT => vec![
-                0.3125, 0.0,
-                0.3125, 0.0625,
-                0.25, 0.0625,
-                0.25, 0.0,
-            ],
-            _ => vec![
-                0.0, 0.0,
-                0.0, 0.0,
-                0.0, 0.0,
-                0.0, 0.0,
-            ],
-        };
 
         Tile {
             kind,
             physics: *physics,
             grid_pos: pos,
-            texture_coordinates: texture_coords,
+            texture_coordinates: texture_coods,
         }
     }
 }
