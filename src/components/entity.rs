@@ -54,6 +54,9 @@ impl Entity {
         let tile_width = 0.41;
         let tile_height = 0.41;
         let mut tiles: Vec<Tile> = vec![];
+        let grass_img = image::open(&Path::new("src/resources/textures/tiles-textures.png"))
+            .expect("Failed to load texture!");
+        let texture: Texture = Texture::new(Box::new(grass_img), 8);
 
         for i in 0..rows {
             for j in 0..columns {
@@ -68,14 +71,13 @@ impl Entity {
                     tile_type,
                     &mut Physics::new(vec3(x, y, 0.0)),
                     vec2(i as f32, j as f32),
+                    texture.get_tile_coord(tile_type as usize),
                 ));
             }
         }
+
         let mut world_physics = Physics::new(position);
         world_physics.rotate_z(-135.0);
-        let grass_img = image::open(&Path::new("src/resources/textures/tiles-textures.png"))
-            .expect("Failed to load texture!");
-        let texture: Texture = Texture::new(Box::new(grass_img));
 
         Entity {
             physics: Some(world_physics),
