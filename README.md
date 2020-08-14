@@ -34,6 +34,13 @@
 
 - Image
     - https://crates.io/crates/image
+    
+- Others
+    - https://crates.io/crates/keyframe
+    - https://dust3d.org/
+    - https://crates.io/crates/noise
+    - https://crates.io/crates/pyxel
+    - https://crates.io/crates/rusttype
 
 
 ### TODO: https://trello.com/b/E4eq5bgb/island-game
