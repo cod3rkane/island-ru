@@ -1,9 +1,11 @@
-use crate::components::entity::Entity;
-use crate::components::shader::{ Shader };
-use crate::core::buffers::*;
-use crate::core::shader::{ create_shader };
+use crate::components::{ entity::Entity, shader::Shader };
+use crate::core::{ buffers::*, shader::create_shader, texture::Texture };
 
 use nalgebra_glm::{ vec3, Mat4, mat4, translate };
+extern crate image;
+use image::GenericImage;
+use image::GenericImageView;
+use std::path::Path;
 
 pub struct GameState {
     pub entities: Vec<Entity>,
@@ -17,6 +19,7 @@ pub struct GameState {
     pub viewport_width: i32,
     pub viewport_height: i32,
     pub world: Option<Entity>,
+    pub textures: Option<Vec<Texture>>,
 }
 
 pub fn initial_game_state() -> GameState {
@@ -24,8 +27,11 @@ pub fn initial_game_state() -> GameState {
     let _world_buffer: Buffer = Buffer::new(BufferRenderType::DrawElementsInstanced);
     let current_shader: Shader = create_shader("src/resources/vertex.glsl", "src/resources/fragment.glsl");
     let world_shader: Shader = create_shader("src/resources/vertex_world.glsl", "src/resources/fragment.glsl");
-    let mut _triangle_a = Entity::new_square(vec3(8.0, 0.0, 0.0));
-    _triangle_a.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
+    let _texture_img = image::open(&Path::new("src/resources/textures/tiles-textures.png"))
+        .expect("Failed to load texture!");
+    let _texture: Texture = Texture::new(Box::new(_texture_img), 8);
+    let mut _player = Entity::new_player(vec3(0.0, 0.0, 0.0), &_texture);
+    _player.physics.as_mut().unwrap().scale(vec3(0.4, 0.4, 0.4));
     let mut _triangle_b = Entity::new_square(vec3(5.4, 0.0, 0.0));
     _triangle_b.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
     let mut _view_matrix: Mat4 = mat4(
@@ -41,9 +47,12 @@ pub fn initial_game_state() -> GameState {
         0.0, 0.0, 1.0, 0.0,
         0.0, 0.0, 0.0, 1.0,
     );
+    let _texture_img = image::open(&Path::new("src/resources/textures/tiles-textures.png"))
+        .expect("Failed to load texture!");
+    let _texture: Texture = Texture::new(Box::new(_texture_img), 8);
 
     GameState {
-        entities: vec![_triangle_a, _triangle_b],
+        entities: vec![_player, _triangle_b],
         buffers: vec![_world_buffer, _initial_buffer],
         current_shader,
         world_shader,
@@ -53,6 +62,7 @@ pub fn initial_game_state() -> GameState {
         window_height: 0,
         viewport_width: 0,
         viewport_height: 0,
-        world: Some(Entity::new_world(vec3(0.0, 0.0, 0.0))),
+        world: Some(Entity::new_world(vec3(0.0, 0.0, 0.0), &_texture)),
+        textures: Some(vec![_texture]),
     }
 }
