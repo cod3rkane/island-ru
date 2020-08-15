@@ -3,7 +3,6 @@
 layout (location = 0) in vec3 vertexPosition;
 layout (location = 1) in vec4 vertexColor;
 layout (location = 2) in mat4 instanceMatrix;
-layout (location = 6) in float v_index;
 
 out vec4 color;
 out vec2 textureCoord;
