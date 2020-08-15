@@ -1,7 +1,7 @@
 use gl;
 extern crate nalgebra_glm as glm;
 
-use crate::components::tile::*;
+use crate::components::{ tile::*, entity::Entity };
 use crate::core::buffers::{BufferRenderType};
 use crate::core::game_state::GameState;
 use std::ffi::{CString};
@@ -29,8 +29,18 @@ pub fn render_system(game_state: &mut GameState) {
                     (3 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
                 );
 
+                buffer.textures_vbo.unwrap().bind();
+                buffer.textures_vbo.unwrap().set_data(
+                    (game_state.entities.len() * 8 * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+                    std::ptr::null(),
+                );
+                buffer.textures_vbo.unwrap().set_vertex_attr(
+                    1,
+                    2,
+                    (2 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
+                );
+
                 buffer.colors_vbo.bind();
-                // @TODO: texture coordinates comes here
                 buffer.colors_vbo.set_data(
                     (game_state.entities.len() * 16 * std::mem::size_of::<f32>())
                         as gl::types::GLsizeiptr,
@@ -114,6 +124,18 @@ pub fn render_system(game_state: &mut GameState) {
 
                     indices_num = e.mesh.indices.len() as isize + indices_num;
                     indice_max = *e.mesh.indices.iter().max().unwrap() as isize + 1;
+
+                    match &e.worker {
+                        Some(worker) => {
+                            buffer.textures_vbo.unwrap().bind();
+                            buffer.textures_vbo.unwrap().set_sub_data(
+                                (i * worker.texture_coords.len() * std::mem::size_of::<f32>() as usize) as isize,
+                                (worker.texture_coords.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
+                                (worker.texture_coords.as_ptr()) as *const gl::types::GLvoid,
+                            );
+                        },
+                        _ => (),
+                    }
                 }
 
                 unsafe {
@@ -138,6 +160,17 @@ pub fn render_system(game_state: &mut GameState) {
                     gl::Enable(gl::BLEND);
                     gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
 
+                    match &game_state.textures {
+                        Some(textures) => {
+                            for texture in textures {
+                                gl::ActiveTexture(gl::TEXTURE1); // @TODO: change Texture1 to 0..1..2..3
+                                gl::BindTexture(gl::TEXTURE_2D, texture.id);
+                                gl::Uniform1i(gl::GetUniformLocation(game_state.current_shader.program_id, CString::new("texture1").expect("texture1").as_ptr()), 1);
+                            }
+                        },
+                        _ => (),
+                    }
+
                     gl::DrawElements(
                         gl::TRIANGLES,
                         indices_num as i32,
@@ -146,6 +179,7 @@ pub fn render_system(game_state: &mut GameState) {
                     );
 
                     gl::Disable(gl::BLEND);
+                    //gl::BindTexture(gl::TEXTURE_2D, 0);
                 }
             }
             BufferRenderType::DrawElementsInstanced => {
@@ -348,7 +382,7 @@ pub fn render_system(game_state: &mut GameState) {
                         gl::Uniform1i(texture_tbo_loc, 0);
 
                         gl::ActiveTexture(gl::TEXTURE1);
-                        gl::BindTexture(gl::TEXTURE_2D, game_state.world.as_ref().unwrap().texture.as_ref().unwrap().id);
+                        gl::BindTexture(gl::TEXTURE_2D, (*game_state.world.as_ref().unwrap().texture.unwrap()).id);
                         gl::Uniform1i(gl::GetUniformLocation(game_state.world_shader.program_id, CString::new("texture1").expect("texture1").as_ptr()), 1);
 
                         gl::DrawElementsInstanced(
