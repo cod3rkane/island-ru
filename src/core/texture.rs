@@ -35,8 +35,8 @@ fn get_tile_size(col_num: i32) -> f32 {
     tile_size
 }
 
-fn get_col_num(image: &DynamicImage, tile_height: i32) -> i32 {
-    let (w, h) = image.dimensions();
+fn get_col_num(image_size: (u32, u32), tile_height: i32) -> i32 {
+    let (w, h) = image_size;
     let s = w as i32 / tile_height;
 
     s
@@ -73,7 +73,7 @@ impl Texture {
 
             gl::BindTexture(gl::TEXTURE_2D, 0);
         }
-        let image_col_num = get_col_num(&image, tile_size);
+        let image_col_num = get_col_num(image.dimensions(), tile_size);
 
         Texture {
             id,
@@ -99,5 +99,29 @@ impl Texture {
         ];
 
         coords
+    }
+
+    /**
+     ** return (start tile coord, end tile coord)
+     */
+    pub fn get_texture_coord_from_size(&self, index: usize, size: i32) -> Vec<f32> {
+        let coord_list = self.get_list_coords_from_size(size);
+        let pos = coord_list.get(index).unwrap();
+        let image_col_num = get_col_num(self.image.as_ref().unwrap().dimensions(), size);
+        let tile_size = get_tile_size(image_col_num);
+        let coords: Vec<f32> = vec![
+            pos[0] + tile_size, pos[1] + tile_size,
+            pos[0] + tile_size, pos[1],
+            pos[0], pos[1],
+            pos[0], pos[1] + tile_size,
+        ];
+
+        coords
+    }
+
+    pub fn get_list_coords_from_size(&self, size: i32) -> Vec<Vec<f32>> {
+        let image_col_num = get_col_num(self.image.as_ref().unwrap().dimensions(), size);
+
+        init_coord_list(image_col_num, get_tile_size(image_col_num))
     }
 }
