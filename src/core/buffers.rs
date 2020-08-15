@@ -51,7 +51,7 @@ impl Buffer {
             indices_vbo: BufferObject::new(gl::ELEMENT_ARRAY_BUFFER),
             transformations_vbo,
             render_type,
-            textures_vbo: Some(BufferObject::new(gl::TEXTURE_BUFFER)),
+            textures_vbo: Some(BufferObject::new(gl::ARRAY_BUFFER)),
             textures_tbo: Some(TextureBufferObject::new(gl::RG32F)),
         }
     }
