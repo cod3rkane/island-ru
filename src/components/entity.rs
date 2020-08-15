@@ -1,9 +1,9 @@
-extern crate image;
-use image::GenericImage;
-use image::GenericImageView;
-use std::path::Path;
 use crate::components::{
-    mesh::Mesh, physics::Physics, tile::Tile, tile::TileType,
+    mesh::Mesh,
+    physics::Physics,
+    tile::Tile,
+    tile::TileType,
+    worker::Worker,
 };
 use crate::core::{ texture::Texture };
 use nalgebra_glm::{vec2, vec3, Vec3};
@@ -13,7 +13,8 @@ pub struct Entity {
     pub physics: Option<Physics>,
     pub mesh: Mesh,
     pub tiles: Option<Vec<Tile>>,
-    pub texture: Option<Texture>,
+    pub texture: Option<*const Texture>,
+    pub worker: Option<Worker>,
 }
 
 impl Entity {
@@ -32,10 +33,35 @@ impl Entity {
             mesh: _triangle,
             tiles: None,
             texture: None,
+            worker: None,
         }
     }
 
-    pub fn new_world(position: Vec3) -> Entity {
+    pub fn new_player(position: Vec3, texture: &Texture) -> Entity {
+        let _triangle = Mesh {
+            vertices: vec![
+                0.2, 1.0, 0.0,
+                0.2, -2.0, 0.0,
+                -1.0, -2.0, 0.0,
+                -1.0, 1.0, 0.0,
+            ],
+            indices: vec![0, 1, 2, 0, 2, 3],
+            colors: vec![
+                0.14902, 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0, 0.14902,
+                0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0,
+            ],
+        };
+
+        Entity {
+            physics: Some(Physics::new(position)),
+            mesh: _triangle,
+            tiles: None,
+            texture: Some(texture),
+            worker: Some(Worker::new(texture.get_texture_coord_from_size(63, 16))),
+        }
+    }
+
+    pub fn new_world(position: Vec3, texture: &Texture) -> Entity {
         let _square = Mesh {
             vertices: vec![
                 1.0, 1.0, 0.0,
@@ -54,9 +80,6 @@ impl Entity {
         let tile_width = 0.41;
         let tile_height = 0.41;
         let mut tiles: Vec<Tile> = vec![];
-        let grass_img = image::open(&Path::new("src/resources/textures/tiles-textures.png"))
-            .expect("Failed to load texture!");
-        let texture: Texture = Texture::new(Box::new(grass_img), 8);
 
         for i in 0..rows {
             for j in 0..columns {
@@ -84,6 +107,7 @@ impl Entity {
             mesh: _square,
             tiles: Some(tiles),
             texture: Some(texture),
+            worker: None,
         }
     }
 }
