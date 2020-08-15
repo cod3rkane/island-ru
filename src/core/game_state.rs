@@ -32,8 +32,6 @@ pub fn initial_game_state() -> GameState {
     let _texture: Texture = Texture::new(Box::new(_texture_img), 8);
     let mut _player = Entity::new_player(vec3(0.0, 0.0, 0.0), &_texture);
     _player.physics.as_mut().unwrap().scale(vec3(0.4, 0.4, 0.4));
-    let mut _triangle_b = Entity::new_square(vec3(5.4, 0.0, 0.0));
-    _triangle_b.physics.as_mut().unwrap().scale(vec3(0.2, 0.2, 0.2));
     let mut _view_matrix: Mat4 = mat4(
         1.0, 0.0, 0.0, 0.0,
         0.0, 1.0, 0.0, 0.0,
@@ -52,7 +50,7 @@ pub fn initial_game_state() -> GameState {
     let _texture: Texture = Texture::new(Box::new(_texture_img), 8);
 
     GameState {
-        entities: vec![_player, _triangle_b],
+        entities: vec![_player],
         buffers: vec![_world_buffer, _initial_buffer],
         current_shader,
         world_shader,
