@@ -37,7 +37,14 @@ fn main() {
     _game_state.viewport_width = 1280;
     _game_state.viewport_height = 720;
 
+    let mut delta_time: f32; // time between current frame and last frame
+    let mut last_frame: f32 = 0.0;
+
     while !window.should_close() {
+        let current_frame = glfw.get_time() as f32;
+        delta_time = current_frame - last_frame;
+        last_frame = current_frame;
+
         unsafe {
             gl::Viewport(0, 0, _game_state.viewport_width, _game_state.viewport_height);
 
@@ -48,10 +55,10 @@ fn main() {
         }
 
         for (_, e) in glfw::flush_messages(&events) {
-            systems::input::capture_input(&mut window, &e, &mut _game_state);
+            systems::input::capture_input(&mut window, &e, &mut _game_state, delta_time);
             handle_window_events(&mut window, e, &mut _game_state);
         }
-        systems::input::capture_mouse(&mut window, &mut _game_state);
+        systems::input::capture_mouse(&mut window, &mut _game_state, delta_time);
 
         //systems::physics::physics_system(&mut _game_state, glfw.get_time());
         systems::render::render_system(&mut _game_state);
