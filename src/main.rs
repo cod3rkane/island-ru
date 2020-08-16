@@ -1,5 +1,5 @@
 extern crate glfw;
-use glfw::{ Action, Context, Key };
+use glfw::{ Action, Context, Key, ffi };
 extern crate gl;
 
 mod components;
@@ -26,6 +26,7 @@ fn main() {
 
     window.make_current();
     window.set_key_polling(true);
+    window.set_scroll_polling(true);
     window.set_framebuffer_size_polling(true);
 
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
