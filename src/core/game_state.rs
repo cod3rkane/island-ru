@@ -21,6 +21,7 @@ pub struct GameState {
     pub world: Option<Entity>,
     pub textures: Option<Vec<Texture>>,
     pub mouse_pos: Vec2,
+    pub camera_zoom: f32,
 }
 
 pub fn initial_game_state() -> GameState {
@@ -39,7 +40,8 @@ pub fn initial_game_state() -> GameState {
         0.0, 0.0, 1.0, 0.0,
         0.0, 0.0, 0.0, 1.0,
     );
-    _view_matrix = translate(&mut _view_matrix, &vec3(0.0, 0.0, -8.0));
+    let camera_zoom = -8.0;
+    _view_matrix = translate(&mut _view_matrix, &vec3(0.0, 0.0, camera_zoom));
     let mut _projection_matrix: Mat4 = mat4(
         1.0, 0.0, 0.0, 0.0,
         0.0, 1.0, 0.0, 0.0,
@@ -64,5 +66,6 @@ pub fn initial_game_state() -> GameState {
         world: Some(Entity::new_world(vec3(0.0, 0.0, 0.0), &_texture)),
         textures: Some(vec![_texture]),
         mouse_pos: vec2(0.0, 0.0),
+        camera_zoom,
     }
 }
