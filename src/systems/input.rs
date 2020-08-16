@@ -1,6 +1,6 @@
 use crate::core::game_state::GameState;
 use glfw::{Action, Key, MouseButtonLeft, Window, WindowEvent};
-use nalgebra_glm::{translate, vec2, vec3};
+use nalgebra_glm::{translate, vec2, vec3, Vec4, vec4, Mat4};
 
 pub fn capture_input(window: &mut Window, event: &WindowEvent, game_state: &mut GameState) {
     match event {
@@ -19,6 +19,27 @@ pub fn capture_input(window: &mut Window, event: &WindowEvent, game_state: &mut 
         glfw::WindowEvent::Key(Key::Right, _, Action::Press, _) => {
             let t = translate(&mut game_state.view_matrix, &vec3(-0.2, 0.0, 0.0));
             game_state.view_matrix = t;
+        }
+        glfw::WindowEvent::Scroll(x, y) => {
+            if *y >= 1.0 {
+                // scroll up
+                if game_state.camera_zoom.abs() >= 8.0 {
+                    let speed = 0.08;
+                    let zoom = game_state.camera_zoom * -speed;
+                    let t = translate(&mut game_state.view_matrix, &vec3(0.0, 0.0, zoom));
+                    game_state.view_matrix = t;
+                    game_state.camera_zoom = game_state.camera_zoom + zoom;
+                }
+            } else {
+                // scroll down
+                if game_state.camera_zoom.abs() <= 20.0 {
+                    let speed = 0.08;
+                    let zoom = game_state.camera_zoom * speed;
+                    let t = translate(&mut game_state.view_matrix, &vec3(0.0, 0.0, zoom));
+                    game_state.view_matrix = t;
+                    game_state.camera_zoom = game_state.camera_zoom + zoom;
+                }
+            }
         }
         _ => {}
     }
