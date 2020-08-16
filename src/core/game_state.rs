@@ -1,7 +1,7 @@
 use crate::components::{ entity::Entity, shader::Shader };
 use crate::core::{ buffers::*, shader::create_shader, texture::Texture };
 
-use nalgebra_glm::{ vec3, Mat4, mat4, translate };
+use nalgebra_glm::{ vec3, Mat4, mat4, translate, vec2, Vec2 };
 extern crate image;
 use image::GenericImage;
 use image::GenericImageView;
@@ -20,6 +20,7 @@ pub struct GameState {
     pub viewport_height: i32,
     pub world: Option<Entity>,
     pub textures: Option<Vec<Texture>>,
+    pub mouse_pos: Vec2,
 }
 
 pub fn initial_game_state() -> GameState {
@@ -62,5 +63,6 @@ pub fn initial_game_state() -> GameState {
         viewport_height: 0,
         world: Some(Entity::new_world(vec3(0.0, 0.0, 0.0), &_texture)),
         textures: Some(vec![_texture]),
+        mouse_pos: vec2(0.0, 0.0),
     }
 }
