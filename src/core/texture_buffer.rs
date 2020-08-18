@@ -1,4 +1,4 @@
-use gl::{ TextureBuffer, BindTextureUnit, TEXTURE_BUFFER, CreateTextures };
+use gl::{ TexBuffer, BindTextureUnit, BindTexture, TEXTURE_BUFFER, /*CreateTextures*/ GenTextures, TEXTURE_2D };
 use gl::types::{ GLuint, GLenum };
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -12,7 +12,7 @@ impl TextureBufferObject {
         let mut id = 0;
 
         unsafe {
-            CreateTextures(TEXTURE_BUFFER, 1, &mut id);
+            GenTextures(1, &mut id);
         }
 
         TextureBufferObject {
@@ -23,19 +23,19 @@ impl TextureBufferObject {
 
     pub fn attach_buffer(&self, buffer: GLuint) {
         unsafe {
-            TextureBuffer(self.id, self.format, buffer);
+            TexBuffer(self.id, self.format, buffer);
         }
     }
 
     pub fn bind(&self, unit: GLuint) {
         unsafe {
-            BindTextureUnit(unit, self.id);
+            BindTexture(TEXTURE_2D, unit);
         }
     }
 
     pub fn unbind(&self) {
         unsafe {
-            BindTextureUnit(0, 0);
+            BindTexture(TEXTURE_2D, 0); 
         }
     }
 }

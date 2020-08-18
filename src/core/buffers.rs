@@ -1,8 +1,9 @@
 use gl::{
-    CreateVertexArrays,
+    //CreateVertexArrays,
+    GenBuffers,
     BindVertexArray,
     DeleteVertexArrays,
-    CreateBuffers,
+    //CreateBuffers,
     VertexAttribPointer,
     EnableVertexAttribArray,
     DeleteBuffers,
@@ -36,7 +37,7 @@ impl Buffer {
         let mut vao_id: GLuint = 0;
 
         unsafe {
-            CreateVertexArrays(1, &mut vao_id);
+            GenBuffers(1, &mut vao_id);
         }
 
         let transformations_vbo = match render_type {
@@ -86,7 +87,7 @@ impl BufferObject {
         let mut id: GLuint = 0;
 
         unsafe {
-            CreateBuffers(1, &mut id);
+            GenBuffers(1, &mut id);
         }
 
         BufferObject {
