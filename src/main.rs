@@ -11,9 +11,8 @@ use crate::core::game_state::*;
 fn main() {
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
 
-    glfw.window_hint(glfw::WindowHint::ContextVersion(4, 5));
+    glfw.window_hint(glfw::WindowHint::ContextVersion(4, 1));
     glfw.window_hint(glfw::WindowHint::OpenGlProfile(glfw::OpenGlProfileHint::Core));
-    #[cfg(target_os = "macos")]
     glfw.window_hint(glfw::WindowHint::OpenGlForwardCompat(true));
 
     let (mut window, events) = glfw.create_window(
