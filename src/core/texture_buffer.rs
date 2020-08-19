@@ -23,19 +23,19 @@ impl TextureBufferObject {
 
     pub fn attach_buffer(&self, buffer: GLuint) {
         unsafe {
-            TexBuffer(self.id, self.format, buffer);
+            TexBuffer(TEXTURE_BUFFER, self.format, buffer);
         }
     }
 
     pub fn bind(&self, unit: GLuint) {
         unsafe {
-            BindTexture(TEXTURE_2D, unit);
+            BindTexture(TEXTURE_BUFFER, self.id);
         }
     }
 
     pub fn unbind(&self) {
         unsafe {
-            BindTexture(TEXTURE_2D, 0); 
+            BindTexture(TEXTURE_BUFFER, 0);
         }
     }
 }

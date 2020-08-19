@@ -179,7 +179,7 @@ pub fn render_system(game_state: &mut GameState) {
                     );
 
                     gl::Disable(gl::BLEND);
-                    //gl::BindTexture(gl::TEXTURE_2D, 0);
+                    gl::BindTexture(gl::TEXTURE_2D, 0);
                 }
             }
             BufferRenderType::DrawElementsInstanced => {
@@ -220,12 +220,12 @@ pub fn render_system(game_state: &mut GameState) {
                     );
 
                     buffer.textures_vbo.unwrap().bind();
-                    buffer.textures_vbo.unwrap().set_vertex_attr_pointer(
-                        6,
-                        2,
-                        (2 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
-                        std::ptr::null(),
-                    );
+                    // buffer.textures_vbo.unwrap().set_vertex_attr_pointer(
+                    //     6,
+                    //     2,
+                    //     (2 * std::mem::size_of::<f32>()) as gl::types::GLsizei,
+                    //     std::ptr::null(),
+                    // );
                     buffer.textures_vbo.unwrap().set_data(
                         ((tiles_len * 8) * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr,
                         std::ptr::null(),
@@ -376,14 +376,20 @@ pub fn render_system(game_state: &mut GameState) {
                         gl::Enable(gl::BLEND);
                         gl::BlendFunc(gl::SRC_ALPHA, gl::ONE_MINUS_SRC_ALPHA);
 
-                        let texture_tbo_loc = gl::GetUniformLocation(game_state.world_shader.program_id, CString::new("texture_tbo").expect("texture_tbo").as_ptr());
                         buffer.textures_tbo.unwrap().bind(0);
                         gl::ActiveTexture(gl::TEXTURE0);
-                        gl::Uniform1i(texture_tbo_loc, 0);
 
-                        gl::ActiveTexture(gl::TEXTURE1);
-                        gl::BindTexture(gl::TEXTURE_2D, (*game_state.world.as_ref().unwrap().texture.unwrap()).id);
-                        gl::Uniform1i(gl::GetUniformLocation(game_state.world_shader.program_id, CString::new("texture1").expect("texture1").as_ptr()), 1);
+                        // @TODO we're using some sort of global textures here, let's see this in the feture
+                        match &game_state.textures {
+                            Some(textures) => {
+                                for texture in textures {
+                                    gl::ActiveTexture(gl::TEXTURE1); // @TODO: change Texture1 to 0..1..2..3
+                                    gl::BindTexture(gl::TEXTURE_2D, texture.id);
+                                    gl::Uniform1i(gl::GetUniformLocation(game_state.current_shader.program_id, CString::new("texture1").expect("texture1").as_ptr()), 1);
+                                }
+                            },
+                            _ => (),
+                        }
 
                         gl::DrawElementsInstanced(
                             gl::TRIANGLES,

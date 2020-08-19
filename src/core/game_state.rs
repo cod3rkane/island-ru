@@ -48,9 +48,6 @@ pub fn initial_game_state() -> GameState {
         0.0, 0.0, 1.0, 0.0,
         0.0, 0.0, 0.0, 1.0,
     );
-    let _texture_img = image::open(&Path::new("src/resources/textures/tiles-textures.png"))
-        .expect("Failed to load texture!");
-    let _texture: Texture = Texture::new(Box::new(_texture_img), 8);
 
     GameState {
         entities: vec![_player],
