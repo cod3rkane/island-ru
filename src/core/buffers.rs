@@ -45,6 +45,10 @@ impl Buffer {
             BufferRenderType::DrawElementsInstanced => Some(BufferObject::new(gl::ARRAY_BUFFER)),
             _ => None,
         };
+        let textures_vbo = match render_type {
+            BufferRenderType::DrawElementsInstanced => Some(BufferObject::new(gl::TEXTURE_BUFFER)),
+            _ => Some(BufferObject::new(gl::ARRAY_BUFFER)),
+        };
 
         Buffer {
             vao_id,
@@ -53,7 +57,7 @@ impl Buffer {
             indices_vbo: BufferObject::new(gl::ELEMENT_ARRAY_BUFFER),
             transformations_vbo,
             render_type,
-            textures_vbo: Some(BufferObject::new(gl::ARRAY_BUFFER)),
+            textures_vbo,
             textures_tbo: Some(TextureBufferObject::new(gl::RG32F)),
         }
     }
