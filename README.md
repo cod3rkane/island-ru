@@ -42,6 +42,7 @@
     - https://crates.io/crates/pyxel
     - https://crates.io/crates/rusttype
     - https://crates.io/crates/glium
+    - https://crates.io/crates/euler
 
 
 ### TODO: https://trello.com/b/E4eq5bgb/island-game
