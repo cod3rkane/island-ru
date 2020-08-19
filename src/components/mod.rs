@@ -6,3 +6,4 @@ pub mod tile;
 pub mod texture;
 pub mod player;
 pub mod worker;
+pub mod world;
