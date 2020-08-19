@@ -10,6 +10,7 @@ pub enum TileType {
     WATER_1 = 10,
     WATER_2 = 11,
     WORKER_16x16 = 63,
+    SNOW = 12,
 }
 
 #[derive(Clone)]
