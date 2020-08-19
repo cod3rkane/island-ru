@@ -3,10 +3,12 @@ use crate::components::{ physics::Physics };
 
 #[derive(Clone, Copy)]
 pub enum TileType {
-    GRASS = 129,
-    WATER = 130,
-    DIRT = 236,
-    SAND = 61,
+    GRASS = 6,
+    SAND = 7,
+    DIRT = 8,
+    WATER = 9,
+    WATER_1 = 10,
+    WATER_2 = 11,
     WORKER_16x16 = 63,
 }
 
