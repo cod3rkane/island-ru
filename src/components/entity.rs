@@ -3,8 +3,7 @@ use crate::components::{
 };
 use crate::core::texture::Texture;
 use nalgebra_glm::{vec2, vec3, Vec3};
-extern crate noise;
-use noise::{ utils::*, * };
+extern crate opensimplex;
 
 #[derive(Clone)]
 pub struct Entity {
@@ -72,45 +71,33 @@ impl Entity {
         let tile_width = 0.4;
         let tile_height = 0.4;
         let mut tiles: Vec<Tile> = vec![];
-        const CURRENT_SEED: u32 = 5;
-        const CONTINENT_FREQUENCY: f64 = 1.00;
-        const CONTINENT_LACUNARITY: f64 = 2.208984375;
-        const SEA_LEVEL: f64 = 0.0;
-        const RIVER_DEPTH: f64 = 0.0234375;
-        let base_continent = Fbm::new()
-            .set_seed(CURRENT_SEED)
-            .set_frequency(CONTINENT_FREQUENCY)
-            .set_persistence(0.5)
-            .set_lacunarity(CONTINENT_LACUNARITY)
-            .set_octaves(14);
-        let perlin = Perlin::new();
-        let clam = Clamp::new(&base_continent)
-            .set_lower_bound(0.0)
-            .set_upper_bound(1.0);
-        let noise: NoiseMap = PlaneMapBuilder::new(&clam)
-            .set_size(rows, columns)
-            .set_x_bounds(0.0, 3.0)
-            .set_y_bounds(0.0, 3.0)
-            .build();
-
-        noise.write_to_file("perlin.png");
+        let noise = opensimplex::OsnContext::new(8847).unwrap();
+        const FREQUENCY_NOISE: f64 = 1.54;
 
         for i in 0..rows {
             for j in 0..columns {
                 let x = (j as f32) * tile_width;
                 let y = (i as f32) * tile_height;
-                let n = noise.get_value(j, i);
+                //let n = noise.get_value(j, i);
+                let nx: f64 = j as f64 / columns as f64 - 0.7;
+                let ny: f64 = i as f64 / rows as f64 - 0.5;
+                let d: f64 = 2.0 * nx.abs().max (ny.abs());
+                let e: f64 = noise.noise2(FREQUENCY_NOISE * nx, FREQUENCY_NOISE * ny) + noise.noise2(0.54 * nx, 0.54 * ny);
+                let n = (1.0 + e - d.powf(4.0)) / 2.0;
+                //let n = e.powf(0.59);
 
-                let mut tile_type: TileType = if n < 0.1 {
+                let mut tile_type: TileType = if n < 0.4 {
                     TileType::WATER
-                } else if n < 0.2 {
+                } else if n < 0.45 {
                     TileType::SAND
-                } else if n < 0.5 {
+                } else if n < 1.0 {
                     TileType::GRASS
-                } else if n < 0.7 {
+                } else if n < 0.72 {
                     TileType::DIRT
-                } else {
+                } else if n < 0.74 {
                     TileType::SNOW
+                } else {
+                    TileType::GRASS
                 };
                 tiles.push(Tile::new(
                     tile_type,
