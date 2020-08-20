@@ -71,8 +71,8 @@ impl Entity {
         let tile_width = 0.4;
         let tile_height = 0.4;
         let mut tiles: Vec<Tile> = vec![];
-        let noise = opensimplex::OsnContext::new(8847).unwrap();
-        const FREQUENCY_NOISE: f64 = 1.54;
+        let noise = opensimplex::OsnContext::new(88).unwrap();
+        const FREQUENCY_NOISE: f64 = 5.54;
 
         for i in 0..rows {
             for j in 0..columns {
@@ -90,11 +90,11 @@ impl Entity {
                     TileType::WATER
                 } else if n < 0.45 {
                     TileType::SAND
-                } else if n < 1.0 {
+                } else if n < 0.8 {
                     TileType::GRASS
-                } else if n < 0.72 {
+                } else if n < 0.91 {
                     TileType::DIRT
-                } else if n < 0.74 {
+                } else if n < 0.98 {
                     TileType::SNOW
                 } else {
                     TileType::GRASS
