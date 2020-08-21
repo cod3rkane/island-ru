@@ -66,8 +66,8 @@ impl Entity {
                 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0,
             ],
         };
-        let rows = 126;
-        let columns = 126;
+        let rows = 36;
+        let columns = 36;
         let tile_width = 0.4;
         let tile_height = 0.4;
         let mut tiles: Vec<Tile> = vec![];
