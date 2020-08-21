@@ -71,7 +71,7 @@ impl Entity {
         let tile_width = 0.4;
         let tile_height = 0.4;
         let mut tiles: Vec<Tile> = vec![];
-        let noise = opensimplex::OsnContext::new(88).unwrap();
+        let noise = opensimplex::OsnContext::new(2).unwrap();
         const FREQUENCY_NOISE: f64 = 5.54;
 
         for i in 0..rows {
@@ -81,10 +81,8 @@ impl Entity {
                 //let n = noise.get_value(j, i);
                 let nx: f64 = j as f64 / columns as f64 - 0.7;
                 let ny: f64 = i as f64 / rows as f64 - 0.5;
-                let d: f64 = 2.0 * nx.abs().max (ny.abs());
-                let e: f64 = noise.noise2(FREQUENCY_NOISE * nx, FREQUENCY_NOISE * ny) + noise.noise2(0.54 * nx, 0.54 * ny);
-                let n = (1.0 + e - d.powf(4.0)) / 2.0;
-                //let n = e.powf(0.59);
+                let e: f64 = noise.noise2(FREQUENCY_NOISE * nx, FREQUENCY_NOISE * ny);
+                let n = e.powf(1.24);
 
                 let mut tile_type: TileType = if n < 0.4 {
                     TileType::WATER
