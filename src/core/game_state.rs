@@ -31,7 +31,7 @@ pub fn initial_game_state() -> GameState {
     let world_shader: Shader = create_shader("src/resources/vertex_world.glsl", "src/resources/fragment.glsl");
     let _texture_img = image::open(&Path::new("src/resources/textures/tiles-textures.png"))
         .expect("Failed to load texture!");
-    let _texture: Texture = Texture::new(Box::new(_texture_img), 8);
+    let _texture: Texture = Texture::new(Box::new(_texture_img), 32);
     let mut _player = Entity::new_player(vec3(0.0, 0.0, 0.0), &_texture);
     _player.physics.as_mut().unwrap().scale(vec3(0.4, 0.4, 0.4));
     let mut _view_matrix: Mat4 = mat4(

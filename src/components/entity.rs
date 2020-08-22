@@ -37,12 +37,21 @@ impl Entity {
     pub fn new_player(position: Vec3, texture: &Texture) -> Entity {
         let _triangle = Mesh {
             vertices: vec![
-                0.2, 1.0, 0.0, 0.2, -2.0, 0.0, -1.0, -2.0, 0.0, -1.0, 1.0, 0.0,
+                0.2, 1.0, 0.0,
+                0.2, -2.0, 0.0,
+                -1.0, -2.0, 0.0,
+                -1.0, 1.0, 0.0,
             ],
             indices: vec![0, 1, 2, 0, 2, 3],
             colors: vec![
-                0.14902, 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0, 0.14902,
-                0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0,
+                0.14902, 0.901961,
+                0.545098, 1.0,
+                0.14902, 0.901961,
+                0.545098, 1.0,
+                0.14902, 0.901961,
+                0.545098, 1.0,
+                0.14902, 0.901961,
+                0.545098, 1.0,
             ],
         };
 
@@ -51,33 +60,44 @@ impl Entity {
             mesh: _triangle,
             tiles: None,
             texture: Some(texture),
-            worker: Some(Worker::new(texture.get_texture_coord_from_size(63, 16))),
+            worker: Some(Worker::new(texture.get_texture_coord_from_size(TileType::WORKER_16x16 as usize, 16))),
         }
     }
 
     pub fn new_world(position: Vec3, texture: &Texture) -> Entity {
         let _square = Mesh {
             vertices: vec![
-                1.0, 1.0, 0.0, 1.0, -1.0, 0.0, -1.0, -1.0, 0.0, -1.0, 1.0, 0.0,
+                0.2, 1.0, 0.0,
+                0.2, -2.0, 0.0,
+                -1.0, -2.0, 0.0,
+                -1.0, 1.0, 0.0,
             ],
             indices: vec![0, 1, 2, 0, 2, 3],
             colors: vec![
-                0.14902, 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0, 0.14902,
-                0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0,
+                0.14902, 0.901961,
+                0.545098, 1.0,
+                0.14902, 0.901961,
+                0.545098, 1.0,
+                0.14902, 0.901961,
+                0.545098, 1.0,
+                0.14902, 0.901961,
+                0.545098, 1.0,
             ],
         };
         let rows = 36;
         let columns = 36;
-        let tile_width = 0.4;
-        let tile_height = 0.4;
+        let tile_width = 0.7;
+        let tile_height = 0.75;
         let mut tiles: Vec<Tile> = vec![];
-        let noise = opensimplex::OsnContext::new(2).unwrap();
-        const FREQUENCY_NOISE: f64 = 5.54;
+        let noise = opensimplex::OsnContext::new(887555).unwrap();
+        const FREQUENCY_NOISE: f64 = 2.28;
 
         for i in 0..rows {
-            for j in 0..columns {
+            for j in (0..columns).rev() {
                 let x = (j as f32) * tile_width;
                 let y = (i as f32) * tile_height;
+                let screen_x = (x + y) * (tile_width / 2.0);
+                let screen_y = (x - y) * (tile_height / 2.0);
                 //let n = noise.get_value(j, i);
                 let nx: f64 = j as f64 / columns as f64 - 0.7;
                 let ny: f64 = i as f64 / rows as f64 - 0.5;
@@ -97,9 +117,10 @@ impl Entity {
                 } else {
                     TileType::GRASS
                 };
+
                 tiles.push(Tile::new(
                     tile_type,
-                    &mut Physics::new(vec3(x, y, 0.0)),
+                    &mut Physics::new(vec3(screen_x, screen_y, 0.0)),
                     vec2(i as f32, j as f32),
                     texture.get_tile_coord(tile_type as usize),
                 ));
@@ -107,7 +128,6 @@ impl Entity {
         }
 
         let mut world_physics = Physics::new(position);
-        world_physics.rotate_z(-135.0);
 
         Entity {
             physics: Some(world_physics),

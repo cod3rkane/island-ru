@@ -3,14 +3,14 @@ use crate::components::{ physics::Physics };
 
 #[derive(Clone, Copy)]
 pub enum TileType {
-    GRASS = 6,
-    SAND = 7,
+    GRASS = 12,
+    SAND = 14,
     DIRT = 8,
-    WATER = 9,
+    WATER = 13,
     WATER_1 = 10,
     WATER_2 = 11,
     WORKER_16x16 = 63,
-    SNOW = 12,
+    SNOW = 122,
 }
 
 #[derive(Clone)]
@@ -23,7 +23,7 @@ pub struct Tile {
 
 impl Tile {
     pub fn new(kind: TileType, physics: &mut Physics, pos: Vec2, texture_coods: Vec<f32>) -> Tile {
-        physics.scale(vec3(0.2, 0.2, 0.0));
+        physics.scale(vec3(0.4, 0.4, 0.0));
 
         Tile {
             kind,
