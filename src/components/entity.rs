@@ -74,8 +74,11 @@ impl Entity {
         let tile_height = 0.75;
         let seed_id: i64 = 16;
         let mut tiles: Vec<Tile> = vec![];
+        let mut tiles_trees: Vec<Tile> = vec![];
+        let mut tiles_rocks: Vec<Tile> = vec![];
         let map_noise = create_random_world(columns, rows, seed_id);
         let tree_noise = create_random_trees(columns, rows, seed_id);
+        let rocks_noise = create_random_noise(columns, rows, seed_id, 60.88);
 
         for i in 0..rows {
             for j in (0..columns).rev() {
@@ -117,18 +120,47 @@ impl Entity {
                 let n: f64 = tree_noise[j as usize * columns as usize + i as usize];
 
                 if n > 0.2 {
-                    let tst: Option<&Tile> = tiles.iter().find(|&t| t.grid_pos.x == i as f32 && t.grid_pos.y == j as f32);
-                    let dd: f32 = 0.4;
+                    let tst: Option<&Tile> = tiles
+                        .iter()
+                        .find(|&t| t.grid_pos.x == i as f32 && t.grid_pos.y == j as f32);
+                    let mut ps = Physics::new(vec3(screen_x, screen_y + 0.888, 0.0));
                     match tst.unwrap().kind {
                         TileType::GRASS => {
                             tiles.push(Tile::new(
                                 TileType::TREE,
-                                &mut Physics::new(vec3(screen_x, screen_y + 0.888, 0.0)),
+                                &mut ps,
                                 vec2(i as f32, j as f32),
                                 texture.get_tile_coord(TileType::TREE as usize),
                             ));
                         }
-                        _ => ()
+                        _ => (),
+                    }
+                }
+
+                let n_rocks: f64 = rocks_noise[j as usize * columns as usize + i as usize];
+                if n_rocks > 0.4 {
+                    let t: Option<&Tile> = tiles
+                        .iter()
+                        .find(|&t| t.grid_pos.x == i as f32 && t.grid_pos.y == j as f32);
+                    let mut ps = Physics::new(vec3(screen_x + 0.22, screen_y + 0.12, 0.0));
+                    ps.scale(vec3(0.6, 0.6, 0.0));
+                    match t.unwrap().kind {
+                        TileType::GRASS => {
+                            let t_tree: Option<&Tile> = tiles.iter().find(|&t| {
+                                t.kind == TileType::TREE
+                                    && t.grid_pos.x == i as f32
+                                    && t.grid_pos.y == j as f32
+                            });
+                            if t_tree.is_none() {
+                                tiles.push(Tile::new(
+                                    TileType::ROCK,
+                                    &mut ps,
+                                    vec2(i as f32, j as f32),
+                                    texture.get_tile_coord(TileType::ROCK_1 as usize),
+                                ));
+                            }
+                        }
+                        _ => (),
                     }
                 }
             }
