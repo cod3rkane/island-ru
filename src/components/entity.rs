@@ -2,7 +2,7 @@ use crate::components::{
     mesh::Mesh, physics::Physics, tile::Tile, tile::TileType, worker::Worker, world::*,
 };
 use crate::core::texture::Texture;
-use nalgebra_glm::{vec2, vec3, Vec3};
+use nalgebra_glm::{vec2, vec3, Vec2, Vec3};
 extern crate opensimplex;
 
 #[derive(Clone)]
@@ -37,21 +37,12 @@ impl Entity {
     pub fn new_player(position: Vec3, texture: &Texture) -> Entity {
         let _triangle = Mesh {
             vertices: vec![
-                0.2, 1.0, 0.0,
-                0.2, -2.0, 0.0,
-                -1.0, -2.0, 0.0,
-                -1.0, 1.0, 0.0,
+                0.2, 1.0, 0.0, 0.2, -2.0, 0.0, -1.0, -2.0, 0.0, -1.0, 1.0, 0.0,
             ],
             indices: vec![0, 1, 2, 0, 2, 3],
             colors: vec![
-                0.14902, 0.901961,
-                0.545098, 1.0,
-                0.14902, 0.901961,
-                0.545098, 1.0,
-                0.14902, 0.901961,
-                0.545098, 1.0,
-                0.14902, 0.901961,
-                0.545098, 1.0,
+                0.14902, 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0, 0.14902,
+                0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0,
             ],
         };
 
@@ -60,37 +51,31 @@ impl Entity {
             mesh: _triangle,
             tiles: None,
             texture: Some(texture),
-            worker: Some(Worker::new(texture.get_texture_coord_from_size(TileType::WORKER_16x16 as usize, 16))),
+            worker: Some(Worker::new(
+                texture.get_texture_coord_from_size(TileType::WORKER_16x16 as usize, 16),
+            )),
         }
     }
 
     pub fn new_world(position: Vec3, texture: &Texture) -> Entity {
         let _square = Mesh {
             vertices: vec![
-                0.2, 1.0, 0.0,
-                0.2, -2.0, 0.0,
-                -1.0, -2.0, 0.0,
-                -1.0, 1.0, 0.0,
+                0.2, 1.0, 0.0, 0.2, -2.0, 0.0, -1.0, -2.0, 0.0, -1.0, 1.0, 0.0,
             ],
             indices: vec![0, 1, 2, 0, 2, 3],
             colors: vec![
-                0.14902, 0.901961,
-                0.545098, 1.0,
-                0.14902, 0.901961,
-                0.545098, 1.0,
-                0.14902, 0.901961,
-                0.545098, 1.0,
-                0.14902, 0.901961,
-                0.545098, 1.0,
+                0.14902, 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0, 0.14902,
+                0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0,
             ],
         };
         let rows = 36;
         let columns = 36;
         let tile_width = 0.7;
         let tile_height = 0.75;
+        let seed_id: i64 = 16;
         let mut tiles: Vec<Tile> = vec![];
-        let noise = opensimplex::OsnContext::new(887555).unwrap();
-        const FREQUENCY_NOISE: f64 = 2.28;
+        let map_noise = create_random_world(columns, rows, seed_id);
+        let tree_noise = create_random_trees(columns, rows, seed_id);
 
         for i in 0..rows {
             for j in (0..columns).rev() {
@@ -98,11 +83,7 @@ impl Entity {
                 let y = (i as f32) * tile_height;
                 let screen_x = (x + y) * (tile_width / 2.0);
                 let screen_y = (x - y) * (tile_height / 2.0);
-                //let n = noise.get_value(j, i);
-                let nx: f64 = j as f64 / columns as f64 - 0.7;
-                let ny: f64 = i as f64 / rows as f64 - 0.5;
-                let e: f64 = noise.noise2(FREQUENCY_NOISE * nx, FREQUENCY_NOISE * ny);
-                let n = e.powf(1.24);
+                let n: f64 = map_noise[j as usize * columns as usize + i as usize];
 
                 let mut tile_type: TileType = if n < 0.4 {
                     TileType::WATER
@@ -124,6 +105,32 @@ impl Entity {
                     vec2(i as f32, j as f32),
                     texture.get_tile_coord(tile_type as usize),
                 ));
+            }
+        }
+
+        for i in 0..rows {
+            for j in (0..columns).rev() {
+                let x = (j as f32) * tile_width;
+                let y = (i as f32) * tile_height;
+                let screen_x = (x + y) * (tile_width / 2.0);
+                let screen_y = (x - y) * (tile_height / 2.0);
+                let n: f64 = tree_noise[j as usize * columns as usize + i as usize];
+
+                if n > 0.2 {
+                    let tst: Option<&Tile> = tiles.iter().find(|&t| t.grid_pos.x == i as f32 && t.grid_pos.y == j as f32);
+                    let dd: f32 = 0.4;
+                    match tst.unwrap().kind {
+                        TileType::GRASS => {
+                            tiles.push(Tile::new(
+                                TileType::TREE,
+                                &mut Physics::new(vec3(screen_x, screen_y + 0.888, 0.0)),
+                                vec2(i as f32, j as f32),
+                                texture.get_tile_coord(TileType::TREE as usize),
+                            ));
+                        }
+                        _ => ()
+                    }
+                }
             }
         }
 
