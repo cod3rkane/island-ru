@@ -1,7 +1,7 @@
 use nalgebra_glm::{ Vec2, vec3 };
 use crate::components::{ physics::Physics };
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum TileType {
     GRASS = 12,
     SAND = 14,
@@ -11,8 +11,9 @@ pub enum TileType {
     WATER_2 = 11,
     WORKER_16x16 = 63,
     SNOW = 122,
-    SIMPLE_TREE = 0,
     TREE = 1,
+    ROCK = 0,
+    ROCK_1 = 2,
 }
 
 #[derive(Clone)]
