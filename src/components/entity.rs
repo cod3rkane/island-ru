@@ -45,9 +45,11 @@ impl Entity {
                 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0,
             ],
         };
+        let mut p = Physics::new(position);
+        p.scale(vec3(0.5, 0.5, 0.0));
 
         Entity {
-            physics: Some(Physics::new(position)),
+            physics: Some(p),
             mesh: _triangle,
             tiles: None,
             texture: Some(texture),
