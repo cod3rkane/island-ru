@@ -32,7 +32,7 @@ pub fn initial_game_state() -> GameState {
     let _texture_img = image::open(&Path::new("src/resources/textures/tiles-textures.png"))
         .expect("Failed to load texture!");
     let _texture: Texture = Texture::new(Box::new(_texture_img), 32);
-    let mut _player = Entity::new_player(vec3(0.0, 0.0, 0.0), &_texture);
+    let mut _player = Entity::new_player(vec3(2.6, 1.0, 0.0), &_texture);
     _player.physics.as_mut().unwrap().scale(vec3(0.4, 0.4, 0.4));
     let mut _view_matrix: Mat4 = mat4(
         1.0, 0.0, 0.0, 0.0,
