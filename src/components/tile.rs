@@ -10,6 +10,7 @@ pub enum TileType {
     WATER_1 = 10,
     WATER_2 = 11,
     WORKER_16x16 = 63,
+    WARRIOR_16 = 62,
     SNOW = 122,
     TREE = 1,
     ROCK = 0,
