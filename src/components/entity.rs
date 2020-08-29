@@ -78,9 +78,9 @@ impl Entity {
         let mut tiles: Vec<Tile> = vec![];
         let mut tiles_trees: Vec<Tile> = vec![];
         let mut tiles_rocks: Vec<Tile> = vec![];
-        let map_noise = create_random_world(columns, rows, seed_id);
-        let tree_noise = create_random_trees(columns, rows, seed_id);
-        let rocks_noise = create_random_noise(columns, rows, seed_id, 60.88);
+        let map_noise = create_random_noise(columns, rows, seed_id, 2.28, 1.24);
+        let tree_noise = create_random_noise(columns, rows, seed_id, 8.88, 1.24);
+        let rocks_noise = create_random_noise(columns, rows, seed_id, 60.88, 1.8);
 
         for i in 0..rows {
             for j in (0..columns).rev() {
