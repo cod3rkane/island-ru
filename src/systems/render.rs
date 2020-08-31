@@ -246,9 +246,9 @@ pub fn render_system(game_state: &mut GameState) {
                             _ => (i * VEC4_SIZE as usize) as isize,
                         };
                         let color: Vec<f32> = match tile.kind {
-                            TileType::DIRT => vec![0.54902, 0.290196, 0.168627, 1.0],
-                            TileType::GRASS => vec![0.25098, 0.909804, 0.411765, 1.0],
-                            _ => vec![1.0, 0.121569, 0.152941, 1.0],
+                            TileType::DIRT => vec![0.54, 0.29, 0.16, 1.0],
+                            TileType::GRASS => vec![0.25, 0.90, 0.41, 1.0],
+                            _ => vec![1.0, 0.12, 0.15, 1.0],
                         };
 
                         buffer.colors_vbo.bind();
