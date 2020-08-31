@@ -1,5 +1,5 @@
 use crate::components::{
-    mesh::Mesh, physics::Physics, tile::Tile, tile::TileType, worker::Worker, world::*,
+    mesh::Mesh, physics::Physics, tile::*, tile::TileType, worker::Worker, world::*,
 };
 use crate::core::texture::Texture;
 use nalgebra_glm::{vec2, vec3, Vec2, Vec3};
@@ -41,8 +41,10 @@ impl Entity {
             ],
             indices: vec![0, 1, 2, 0, 2, 3],
             colors: vec![
-                0.14902, 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0, 0.14902,
-                0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0,
+                0.14902, 0.901961, 0.545098, 1.0,
+                0.14902, 0.901961, 0.545098, 1.0,
+                0.14902, 0.901961, 0.545098, 1.0,
+                0.14902, 0.901961, 0.545098, 1.0,
             ],
         };
         let mut p = Physics::new(position);
@@ -66,8 +68,7 @@ impl Entity {
             ],
             indices: vec![0, 1, 2, 0, 2, 3],
             colors: vec![
-                0.14902, 0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0, 0.14902,
-                0.901961, 0.545098, 1.0, 0.14902, 0.901961, 0.545098, 1.0,
+                0.14902, 0.901961, 0.545098, 1.0,
             ],
         };
         let rows = 36;
@@ -76,8 +77,7 @@ impl Entity {
         let tile_height = 0.75;
         let seed_id: i64 = 16;
         let mut tiles: Vec<Tile> = vec![];
-        let mut tiles_trees: Vec<Tile> = vec![];
-        let mut tiles_rocks: Vec<Tile> = vec![];
+        let mut tiles_items: Vec<Tile> = vec![];
         let map_noise = create_random_noise(columns, rows, seed_id, 2.28, 1.24);
         let tree_noise = create_random_noise(columns, rows, seed_id, 8.88, 1.24);
         let rocks_noise = create_random_noise(columns, rows, seed_id, 60.88, 1.8);
@@ -104,12 +104,18 @@ impl Entity {
                     TileType::GRASS
                 };
 
-                tiles.push(Tile::new(
+                let mut tile: Tile = Tile::new(
                     tile_type,
                     &mut Physics::new(vec3(screen_x, screen_y, 0.0)),
-                    vec2(i as f32, j as f32),
+                    GridPos(i as i32, j as i32),
                     texture.get_tile_coord(tile_type as usize),
-                ));
+                );
+
+                if tile_type == TileType::WATER {
+                    tile.physics.is_obstacle = true;
+                }
+
+                tiles.push(tile);
             }
         }
 
@@ -124,14 +130,17 @@ impl Entity {
                 if n > 0.2 {
                     let tst: Option<&Tile> = tiles
                         .iter()
-                        .find(|&t| t.grid_pos.x == i as f32 && t.grid_pos.y == j as f32);
+                        .find(|&t| t.grid_pos.0 == i as i32 && t.grid_pos.1 == j as i32);
                     let mut ps = Physics::new(vec3(screen_x, screen_y + 0.888, 0.0));
                     match tst.unwrap().kind {
                         TileType::GRASS => {
-                            tiles.push(Tile::new(
+                            let grid_tile = tiles.iter_mut().find(|t| t.grid_pos == GridPos(i as i32, j as i32)).unwrap();
+                            ps.is_obstacle = true;
+                            grid_tile.physics.is_obstacle = true;
+                            tiles_items.push(Tile::new(
                                 TileType::TREE,
                                 &mut ps,
-                                vec2(i as f32, j as f32),
+                                GridPos(i as i32, j as i32),
                                 texture.get_tile_coord(TileType::TREE as usize),
                             ));
                         }
@@ -143,21 +152,24 @@ impl Entity {
                 if n_rocks > 0.4 {
                     let t: Option<&Tile> = tiles
                         .iter()
-                        .find(|&t| t.grid_pos.x == i as f32 && t.grid_pos.y == j as f32);
+                        .find(|&t| t.grid_pos.0 == i as i32 && t.grid_pos.1 == j as i32);
                     let mut ps = Physics::new(vec3(screen_x + 0.22, screen_y + 0.12, 0.0));
                     ps.scale(vec3(0.6, 0.6, 0.0));
                     match t.unwrap().kind {
                         TileType::GRASS => {
                             let t_tree: Option<&Tile> = tiles.iter().find(|&t| {
                                 t.kind == TileType::TREE
-                                    && t.grid_pos.x == i as f32
-                                    && t.grid_pos.y == j as f32
+                                    && t.grid_pos.0 == i as i32
+                                    && t.grid_pos.1 == j as i32
                             });
                             if t_tree.is_none() {
-                                tiles.push(Tile::new(
+                                let grid_tile = tiles.iter_mut().find(|t| t.grid_pos == GridPos(i as i32, j as i32)).unwrap();
+                                ps.is_obstacle = true;
+                                grid_tile.physics.is_obstacle = true;
+                                tiles_items.push(Tile::new(
                                     TileType::ROCK,
                                     &mut ps,
-                                    vec2(i as f32, j as f32),
+                                    GridPos(i as i32, j as i32),
                                     texture.get_tile_coord(TileType::ROCK_1 as usize),
                                 ));
                             }
@@ -169,6 +181,7 @@ impl Entity {
         }
 
         let mut world_physics = Physics::new(position);
+        tiles.append(&mut tiles_items);
 
         Entity {
             physics: Some(world_physics),
