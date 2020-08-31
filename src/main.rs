@@ -58,6 +58,7 @@ fn main() {
             handle_window_events(&mut window, e, &mut _game_state);
         }
         systems::input::capture_mouse(&mut window, &mut _game_state, delta_time);
+        systems::interations::interations_system(&mut _game_state, delta_time);
 
         //systems::physics::physics_system(&mut _game_state, glfw.get_time());
         systems::render::render_system(&mut _game_state);
