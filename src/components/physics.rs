@@ -4,6 +4,7 @@ use nalgebra_glm::{ Vec3, vec1, Mat4, mat4, translate, rotate_z, scale, radians 
 pub struct Physics {
     pub position: Vec3,
     pub transform: Mat4,
+    pub is_obstacle: bool,
 }
 
 impl Physics {
@@ -20,6 +21,7 @@ impl Physics {
         Physics {
             position,
             transform: _transform,
+            is_obstacle: false,
         }
     }
 
