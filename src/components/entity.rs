@@ -34,7 +34,7 @@ impl Entity {
         }
     }
 
-    pub fn new_player(position: Vec3, texture: &Texture) -> Entity {
+    pub fn new_worker(position: Vec3, texture: &Texture) -> Entity {
         let _triangle = Mesh {
             vertices: vec![
                 0.2, 1.0, 0.0, 0.2, -2.0, 0.0, -1.0, -2.0, 0.0, -1.0, 1.0, 0.0,
@@ -157,7 +157,7 @@ impl Entity {
                     ps.scale(vec3(0.6, 0.6, 0.0));
                     match t.unwrap().kind {
                         TileType::GRASS => {
-                            let t_tree: Option<&Tile> = tiles.iter().find(|&t| {
+                            let t_tree: Option<&Tile> = tiles_items.iter().find(|&t| {
                                 t.kind == TileType::TREE
                                     && t.grid_pos.0 == i as i32
                                     && t.grid_pos.1 == j as i32
