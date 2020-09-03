@@ -180,6 +180,16 @@ impl Entity {
             }
         }
 
+        let grid_tile = tiles.iter_mut().find(|t| t.grid_pos == GridPos(24, 0)).unwrap();
+        let mut tile: Tile = Tile::new(
+            TileType::SELECTED_32,
+            &mut Physics::new(vec3(grid_tile.physics.position.x, grid_tile.physics.position.y, 0.0)),
+            GridPos(24, 0),
+            texture.get_tile_coord(TileType::SELECTED_32 as usize),
+        );
+
+        tiles.push(tile);
+
         let mut world_physics = Physics::new(position);
         tiles.append(&mut tiles_items);
 
