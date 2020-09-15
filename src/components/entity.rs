@@ -75,7 +75,7 @@ impl Entity {
         let columns = 36;
         let tile_width = 0.7;
         let tile_height = 0.75;
-        let seed_id: i64 = 16;
+        let seed_id: i64 = 985;
         let mut tiles: Vec<Tile> = vec![];
         let mut tiles_items: Vec<Tile> = vec![];
         let map_noise = create_random_noise(columns, rows, seed_id, 2.28, 1.24);

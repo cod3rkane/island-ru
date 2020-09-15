@@ -1,6 +1,6 @@
 use crate::components::tile::*;
 use crate::core::game_state::GameState;
-use nalgebra_glm::{vec4, Vec4, Mat4, inverse, translate, vec3, Vec3};
+use nalgebra_glm::{vec4, Vec4, Mat4, inverse, translate, vec3, Vec3, normalize};
 use pathfinding::prelude::{absdiff, bfs};
 
 extern crate nalgebra_glm as glm;
@@ -81,12 +81,15 @@ pub fn interations_system(game_state: &mut GameState, delta_time: f32) {
     let inverted_view_matrix: Mat4 = inverse(&view_matrix);
     let ray_world: Vec4 = inverted_view_matrix * eye_coords;
     let mouse_pos: Vec3 = vec3(ray_world.x, ray_world.y, ray_world.z);
+    let normalize_pos: Vec3 = normalize(&mouse_pos);
 
     // Grid Pos
     let grid_transform = game_state.world.as_ref().unwrap().physics.unwrap().transform;
     let t: Vec4 = projection_matrix * vec4(p.x, p.y, p.z, 1.0);
     let t1: Vec4 = view_matrix * grid_transform * t;
     let grid_pos: Vec3 = vec3(t1.x, t1.y, t1.z);
+    let test: Vec3 = normalize(&grid_pos);
 
-    println!("TILE: {:?} Mouse: {:?}", grid_pos, mouse_pos);
+    println!("Mouse POS {:?}", normalize_pos);
+    println!("TILE: {:?}", test);
 }
