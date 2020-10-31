@@ -37,7 +37,7 @@ impl Entity {
     pub fn new_worker(position: Vec3, texture: &Texture) -> Entity {
         let _triangle = Mesh {
             vertices: vec![
-                0.2, 1.0, 0.0, 0.2, -2.0, 0.0, -1.0, -2.0, 0.0, -1.0, 1.0, 0.0,
+                1.0, 1.0, 0.0, 1.0, -1.0, 0.0, -1.0, -1.0, 0.0, -1.0, 1.0, 0.0,
             ],
             indices: vec![0, 1, 2, 0, 2, 3],
             colors: vec![
@@ -64,17 +64,20 @@ impl Entity {
     pub fn new_world(position: Vec3, texture: &Texture) -> Entity {
         let _square = Mesh {
             vertices: vec![
-                0.2, 1.0, 0.0, 0.2, -2.0, 0.0, -1.0, -2.0, 0.0, -1.0, 1.0, 0.0,
+                1.0, 1.0, 0.0,
+                1.0, -1.0, 0.0,
+                -1.0, -1.0, 0.0,
+                -1.0, 1.0, 0.0,
             ],
             indices: vec![0, 1, 2, 0, 2, 3],
             colors: vec![
                 0.14902, 0.901961, 0.545098, 1.0,
             ],
         };
-        let rows = 36;
-        let columns = 36;
-        let tile_width = 0.7;
-        let tile_height = 0.75;
+        let rows = 16;
+        let columns = 16;
+        let tile_width = 2.0;
+        let tile_height = 1.0;
         let seed_id: i64 = 985;
         let mut tiles: Vec<Tile> = vec![];
         let mut tiles_items: Vec<Tile> = vec![];
@@ -86,8 +89,12 @@ impl Entity {
             for j in (0..columns).rev() {
                 let x = (j as f32) * tile_width;
                 let y = (i as f32) * tile_height;
-                let screen_x = (x + y) * (tile_width / 2.0);
-                let screen_y = (x - y) * (tile_height / 2.0);
+                // let screen_x = (x + y) * (tile_width / 2.0);
+                // let screen_y = (x - y) * (tile_height / 2.0);
+                // let screen_x = i as f32 * tile_width;
+                // let screen_y = j as f32 * tile_height;
+                let screen_x = (i as f32 * tile_width / 2.0) + (j as f32 * tile_width / 2.0);
+                let screen_y = (j as f32 * tile_height / 2.0) - (i as f32 * tile_height / 2.0);
                 let n: f64 = map_noise[j as usize * columns as usize + i as usize];
 
                 let mut tile_type: TileType = if n < 0.4 {
@@ -180,11 +187,11 @@ impl Entity {
             }
         }
 
-        let grid_tile = tiles.iter_mut().find(|t| t.grid_pos == GridPos(24, 0)).unwrap();
+        let grid_tile = tiles.iter_mut().find(|t| t.grid_pos == GridPos(0, 0)).unwrap();
         let mut tile: Tile = Tile::new(
             TileType::SELECTED_32,
             &mut Physics::new(vec3(grid_tile.physics.position.x, grid_tile.physics.position.y, 0.0)),
-            GridPos(24, 0),
+            GridPos(0, 0),
             texture.get_tile_coord(TileType::SELECTED_32 as usize),
         );
 

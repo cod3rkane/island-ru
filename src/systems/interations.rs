@@ -58,7 +58,7 @@ pub fn interations_system(game_state: &mut GameState, delta_time: f32) {
         .as_ref()
         .unwrap()
         .iter()
-        .find(|t| t.grid_pos == GridPos(0, 34))
+        .find(|t| t.grid_pos == GridPos(0, 0))
         .unwrap();
     let p = grid_tile.physics.position;
 
@@ -90,6 +90,6 @@ pub fn interations_system(game_state: &mut GameState, delta_time: f32) {
     let grid_pos: Vec3 = vec3(t1.x, t1.y, t1.z);
     let test: Vec3 = normalize(&grid_pos);
 
-    println!("Mouse POS {:?}", normalize_pos);
-    println!("TILE: {:?}", test);
+    // println!("Mouse POS {:?} {:?}", game_state.mouse_pos.x, game_state.mouse_pos.y);
+    // println!("TILE: {:?}", test);
 }

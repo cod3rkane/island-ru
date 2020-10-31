@@ -61,7 +61,7 @@ impl Tile {
         pos: GridPos,
         texture_coods: Vec<f32>,
     ) -> Tile {
-        physics.scale(vec3(0.4, 0.4, 0.0));
+        physics.scale(vec3(1.0, 1.0, 1.0));
 
         Tile {
             kind,

@@ -7,8 +7,14 @@ use crate::core::game_state::GameState;
 use std::ffi::{CString};
 
 pub fn render_system(game_state: &mut GameState) {
-    let aspect: f32 = (game_state.window_width / game_state.window_height) as f32;
-    game_state.projection_matrix = glm::perspective(aspect, 45.0, 0.1, 100.0);
+    let fov: f32 = 45.0;
+    game_state.projection_matrix = glm::perspective_fov(
+        fov.to_radians(),
+        game_state.window_width as f32,
+        game_state.window_height as f32,
+        0.1,
+        1000.0
+    );
 
     for buffer in &mut game_state.buffers {
         match buffer.render_type {
