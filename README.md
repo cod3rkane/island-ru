@@ -12,6 +12,12 @@
     Game Mechanics
     By draging and drop the champions to fight you have to be wise to pass to the next level.
 
+## Pics
+![Pic](https://github.com/cod3rkane/island-ru/blob/master/src/resources/textures/1.png?raw=true)
+![Pic2](https://github.com/cod3rkane/island-ru/blob/master/src/resources/textures/2.png?raw=true)
+![Pic3](https://github.com/cod3rkane/island-ru/blob/master/src/resources/textures/3.png?raw=true)
+
+
 ## Helpful Crates
 
 - Windowing
@@ -45,4 +51,3 @@
     - https://crates.io/crates/euler
 
 
-### TODO: https://trello.com/b/E4eq5bgb/island-game
